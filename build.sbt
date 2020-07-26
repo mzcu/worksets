@@ -3,28 +3,17 @@ name := "worksets"
 
 version := "0.1"
 
-scalaVersion := "2.12.10"
+scalaVersion := "2.13.3"
 
 wartremoverErrors ++= Warts.unsafe.filterNot(_ == Wart.DefaultArguments)
 
 
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0" % "test"
 
-// Core project settings
-libraryDependencies += "org.scalactic" %% "scalactic" % "3.1.0"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % "test"
+val circeVersion = "0.13.0"
 
-
-
-// UI project settings
-lazy val ui: Project = (project in file("worksets-ui"))
-  .settings(
-    name := "worksets-ui",
-    libraryDependencies ++= Seq(
-      "com.thoughtworks.binding" %%% "dom" % "latest.release"
-    ),
-    scalaJSUseMainModuleInitializer := false,
-    scalaJSUseMainModuleInitializer in Test := false,
-    crossPaths := false,
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
-  ).enablePlugins(ScalaJSPlugin)
-
+libraryDependencies ++= Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion)

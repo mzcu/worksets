@@ -21,7 +21,7 @@ package object worksets {
   case class Set(weight: Weight, reps: Int, rpe: Rpe) {
     def *(count: Int): List[Set] = List.fill(count)(this)
   }
-  case class WorkSet(exercise: ExerciseWithMods, target: Set, actual: Set, ord: Int = Int.MinValue)
+  case class WorkSet(exercise: ExerciseWithMods, target: Set, actual: Set, ord: Int = Int.MinValue, completed: Boolean = false)
 
   case class Exercise(name: String)
   case class ExerciseWithMods(exercise: Exercise, barType: BarType, mods: Mods)

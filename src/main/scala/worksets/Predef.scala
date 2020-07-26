@@ -9,7 +9,8 @@ object Predef {
   val Bench: Exercise = Exercise("Bench Press")
   val Deadlift: Exercise = Exercise("Deadlift")
   val Squat: Exercise = Exercise("Squat")
-  val PendlayRow: Exercise = Exercise("Pendlay row")
+  val PendlayRow: Exercise = Exercise("Pendlay Row")
+  val FrontSquat: Exercise = Exercise("Front Squat")
 
   // Exercises with mods
 
@@ -26,7 +27,8 @@ object Predef {
   // Deadlift
   val CompetitionDeadlift: ExerciseWithMods = ExerciseWithMods(Deadlift, Barbell, mods = WithMods(kit = Some(Belt)))
 
-
+  // Front squat
+  val FrontSquatStandard: ExerciseWithMods = ExerciseWithMods(FrontSquat, Barbell, NoMods)
 
   // Row
   val PendlayRowStandard: ExerciseWithMods = ExerciseWithMods(PendlayRow, Barbell, NoMods)

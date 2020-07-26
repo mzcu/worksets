@@ -20,6 +20,8 @@ object Show {
 }
 
 
+
+@SuppressWarnings(Array("org.wartremover.warts.All"))
 object ConsoleView {
 
   import Show._
@@ -31,7 +33,7 @@ object ConsoleView {
     case _ => ""
   })
 
-  implicit val WorkSetShow: Show[WorkSet] = (workset: WorkSet) => s"${workset.target.show}"
+  implicit val WorkSetShow: Show[WorkSet] = (workset: WorkSet) => s"${workset.actual.show}"
 
   implicit val ExerciseWithModsShow: Show[ExerciseWithMods] = { it: ExerciseWithMods =>
     @tailrec

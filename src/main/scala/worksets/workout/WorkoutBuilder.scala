@@ -11,14 +11,14 @@ import scala.collection.mutable.ListBuffer
 /**
  * Created by on 04-01-20.
  */
-class WorkoutBuilder(val date: LocalDate) {
+class WorkoutBuilder(val date: LocalDate, val workoutHistory: Seq[Workout]) {
 
   private[workout] val setCounter = new AtomicInteger()
   private[workout] val workSets = ListBuffer[WorkSet]()
 
   def exercise(exercise: ExerciseWithMods): WorkoutExerciseBuilder = new WorkoutExerciseBuilder(this, exercise)
 
-  def endWorkout(): Workout = Workout(date, workSets.toList)
+  def endWorkout(u: Unit): Workout = Workout(date, workSets.toList)
 }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
@@ -30,6 +30,15 @@ class WorkoutExerciseBuilder(private val parent: WorkoutBuilder, private val exe
   def withWorkingSet(weight: Weight, reps: Int, rpe: Rpe): this.type = {
     val number = parent.setCounter.incrementAndGet()
     val target = Set(weight, reps, rpe)
+    workSets += WorkSet(exercise, target, target, number)
+    this
+  }
+
+
+  def withProgressiveOverload(multiplier: Double): this.type = {
+    val number = parent.setCounter.incrementAndGet()
+    val lastTopSet = parent.workoutHistory.reverse.take(10).map(_.sets.filter(_.exercise == this.exercise).map(_.actual).maxBy(_.weight.grams)).head
+    val target = WorksetOps.createSet(Weight((lastTopSet.weight.grams*multiplier).toInt), lastTopSet.reps, lastTopSet.rpe)
     workSets += WorkSet(exercise, target, target, number)
     this
   }
@@ -71,7 +80,7 @@ class WorkoutExerciseBuilder(private val parent: WorkoutBuilder, private val exe
     this
   }
 
-  def end(): WorkoutBuilder = {
+  def end(u: Unit): WorkoutBuilder = {
     parent.workSets ++= this.workSets
     parent
   }
@@ -79,8 +88,7 @@ class WorkoutExerciseBuilder(private val parent: WorkoutBuilder, private val exe
 }
 
 object WorkoutBuilder {
-  def newWorkout(date: String): WorkoutBuilder = WorkoutBuilder(LocalDate.parse(date))
-
-  def apply(date: LocalDate): WorkoutBuilder = new WorkoutBuilder(date)
+  def newWorkout(date: String)(implicit workoutHistory: Seq[Workout]): WorkoutBuilder = WorkoutBuilder(LocalDate.parse(date), workoutHistory)
+  def apply(date: LocalDate, workoutHistory: Seq[Workout]): WorkoutBuilder = new WorkoutBuilder(date, workoutHistory)
 }
 
