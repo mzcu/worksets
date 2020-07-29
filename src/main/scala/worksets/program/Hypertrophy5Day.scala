@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 import worksets.calendar._
 import worksets.workout.WorkoutBuilder.newWorkout
-import worksets.{Rpe8, Rpe9, Weight, Workout}
+import worksets.{Rpe6, Rpe7, Rpe8, Rpe9, Weight, Workout}
 
 /**
  * Created by on 22-07-20.
@@ -17,8 +17,9 @@ class Hypertrophy5Day(implicit val workoutHistory: Seq[Workout]) {
   private val squatDay = { date: LocalDate =>
     (
       newWorkout(date.toString)
-        exercise CompetitionSquat withWorkingSet(Weight(120.0), 1, Rpe8) withWorkingSetRelative(.77, 5, 2) end()
-        exercise CompetitionBench withWorkingSet(Weight(100.0), 1, Rpe8) withWorkingSetRelative(.87, 4, 3) end()
+        exercise CompetitionSquat withWorkingSet(Weight(80.0), 10, Rpe6) withWorkingSetRelative(1.0, 10, 3) end()
+        exercise CompetitionBench withWorkingSet(Weight(70.0), 10, Rpe6) withWorkingSetRelative(1.0, 10, 3) end()
+        exercise StandingPressStandard withWorkingSet(Weight(55.0), 6, Rpe6) withWorkingSetRelative(1.0, 6, 3) end()
         endWorkout()
       )
   }
@@ -26,9 +27,9 @@ class Hypertrophy5Day(implicit val workoutHistory: Seq[Workout]) {
   private val deadLiftDay = { date: LocalDate =>
     (
       newWorkout(date.toString)
-        exercise CompetitionDeadlift withWorkingSet(Weight(127.5), 1, Rpe8) withWorkingSetRelative(.82, 5, 2) end()
-        exercise PendlayRowStandard withWorkingSet(Weight(80.0), 6, Rpe8) withWorkingSetRelative(.8, 5, 2) end()
-        exercise PausedBench3ct withWorkingSet(Weight(80.0), 1, Rpe8) withWorkingSet(Weight(80.0), 6, Rpe9) loadDrop 1 end()
+        exercise CompetitionDeadlift withWorkingSet(Weight(110.0), 6, Rpe6) withWorkingSetRelative(1.1, 6, 4) end()
+        exercise PendlayRowStandard withWorkingSet(Weight(90.0), 4, Rpe8) withWorkingSetRelative(0.90, 6, 3) end()
+        exercise WideGripBench withWorkingSet(Weight(65.0), 10, Rpe7) withWorkingSetRelative(1.0, 10, 3) end()
         endWorkout()
       )
   }
@@ -36,7 +37,8 @@ class Hypertrophy5Day(implicit val workoutHistory: Seq[Workout]) {
   private val lightDay = { date: LocalDate =>
     (
       newWorkout(date.toString)
-        exercise FrontSquatStandard withWorkingSet(Weight(80.0), 6, Rpe8) end()
+        exercise FrontSquatStandard withWorkingSet(Weight(80.0), 10, Rpe8) withWorkingSetRelative(0.92, 10, 3) end()
+        exercise BodyWeightPullups withWorkingSet (Weight(80.0), 5, Rpe7) withWorkingSetRelative(1.0, 5, 3) end()
         endWorkout()
       )
   }

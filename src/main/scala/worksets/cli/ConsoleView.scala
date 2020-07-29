@@ -1,8 +1,9 @@
-package worksets
+package worksets.cli
 
-import java.time.{LocalDate, ZoneId}
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Date
+
+import worksets.{BarType, Barbell, CustomTempoMod, Exercise, ExerciseWithMods, NoBar, NoMods, Pause, RpeVal, Set, Tempo, TempoMod, TouchAndGo, TrapBar, Weight, WithMods, WorkSet, Workout}
 
 import scala.annotation.tailrec
 
@@ -56,6 +57,7 @@ object ConsoleView {
   implicit val BarTypeShow: Show[BarType] = {
     case Barbell => ""
     case TrapBar => "Trap Bar"
+    case NoBar => "BodyWeight"
   }
 
   implicit val ExerciseShow: Show[Exercise] = (exercise: Exercise) => exercise.name

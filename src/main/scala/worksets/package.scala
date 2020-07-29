@@ -3,7 +3,9 @@ import java.time.LocalDate
 
 package object worksets {
 
-  case class Weight(grams: Int)
+  case class Weight(grams: Int) {
+    def +(that: Weight): Weight = Weight(grams + that.grams)
+  }
 
   object Weight {
     def apply(kilos: Double): Weight = Weight((kilos * 1000).toInt)
@@ -47,6 +49,8 @@ package object worksets {
   case object Barbell extends BarType
 
   case object TrapBar extends BarType
+
+  case object NoBar extends BarType
 
   sealed trait TempoMod
 

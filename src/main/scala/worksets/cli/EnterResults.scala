@@ -1,4 +1,4 @@
-package worksets.interactive
+package worksets.cli
 
 import worksets.{RpeVal, Weight}
 import worksets.repository.ObjectStore
@@ -11,8 +11,8 @@ import scala.io.StdIn
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 object EnterResults extends App {
 
-  import worksets.ConsoleView._
-  import worksets.Show._
+  import ConsoleView._
+  import Show._
 
 
   val allWorkouts =  ObjectStore.load()
