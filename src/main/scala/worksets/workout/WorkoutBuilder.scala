@@ -12,38 +12,49 @@ import scala.collection.mutable.ListBuffer
  * Created by on 04-01-20.
  */
 class WorkoutBuilder(val date: LocalDate, val workoutHistory: Seq[Workout]) {
-
   private[workout] val setCounter = new AtomicInteger()
   private[workout] val workSets = ListBuffer[WorkSet]()
-
   def exercise(exercise: ExerciseWithMods): WorkoutExerciseBuilder = new WorkoutExerciseBuilder(this, exercise)
-
-  def endWorkout(u: Unit): Workout = Workout(date, workSets.toList)
 }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
-class WorkoutExerciseBuilder(private val parent: WorkoutBuilder, private val exercise: ExerciseWithMods) {
+class WorkoutExerciseBuilder(private[workout] val parent: WorkoutBuilder, private[workout] val exercise: ExerciseWithMods) {
+  self =>
 
-
+  private var closed: Boolean = false
   private[workout] val workSets = ListBuffer[WorkSet]()
 
-  def withWorkingSet(weight: Weight, reps: Int, rpe: Rpe): this.type = {
-    val number = parent.setCounter.incrementAndGet()
-    val target = Set(weight, reps, rpe)
-    workSets += WorkSet(exercise, target, target, number)
-    this
+  def close(): Unit = closed = true
+  def isOpen: Boolean = !closed
+
+  // Static builders using values provided as arguments)
+
+  def workset(weight: Weight): RepsToRpeBuilder = new RepsToRpeBuilder {
+    require(isOpen)
+    private val number = parent.setCounter.incrementAndGet()
+
+    def x(reps: Int): RpeBuilder = (rpe: Rpe) => {
+      val target = Set(weight, reps, rpe)
+      workSets += WorkSet(exercise, target, target, number)
+      self
+    }
   }
 
-
-  def withProgressiveOverload(multiplier: Double): this.type = {
+  def worksetRelative(multiplier: Double): RepsToSetsBuilder = (reps: Int) => (howMany: Int) => {
+    require(isOpen)
     val number = parent.setCounter.incrementAndGet()
-    val lastTopSet = parent.workoutHistory.reverse.take(10).map(_.sets.filter(_.exercise == this.exercise).map(_.actual).maxBy(_.weight.grams)).head
-    val target = WorksetOps.createSet(Weight((lastTopSet.weight.grams*multiplier).toInt), lastTopSet.reps, lastTopSet.rpe)
-    workSets += WorkSet(exercise, target, target, number)
-    this
+    require(workSets.nonEmpty)
+    val reference = workSets.last.target
+    val modifiedWeight = Weight((reference.weight.grams * multiplier).toInt)
+    val modifiedPct = RpeOps.toPct(reference.reps, reference.rpe) * multiplier
+    val modifiedRpe = RpeOps.toRpe(reps, modifiedPct)
+    val target = WorksetOps.createSet(modifiedWeight, reps, modifiedRpe)
+    workSets ++= List.fill(howMany)(WorkSet(exercise, target, target, number))
+    self
   }
 
-  def withWorkingSetsByRpe(weight: Weight, reps: Int, rpe: Range): this.type = {
+  def worksetsByRpe(rpe: Range): RepsToWeightBuilder = (reps: Int) => (weight: Weight) => {
+    require(isOpen)
     val startingPct = RpeOps.toPct(reps, RpeVal(rpe.head))
     workSets ++= rpe.map(rpeInt => {
       val number = parent.setCounter.incrementAndGet()
@@ -59,19 +70,9 @@ class WorkoutExerciseBuilder(private val parent: WorkoutBuilder, private val exe
     this
   }
 
-  def withWorkingSetRelative(multiplier: Double, reps: Int, howMany: Int): this.type = {
-    val number = parent.setCounter.incrementAndGet()
-    require(workSets.nonEmpty)
-    val reference = workSets.last.target
-    val modifiedWeight = Weight((reference.weight.grams * multiplier).toInt)
-    val modifiedPct = RpeOps.toPct(reference.reps, reference.rpe) * multiplier
-    val modifiedRpe = RpeOps.toRpe(reps, modifiedPct)
-    val target = WorksetOps.createSet(modifiedWeight, reps, modifiedRpe)
-    workSets ++= List.fill(howMany)(WorkSet(exercise, target, target, number))
-    this
-  }
 
   def loadDrop(howMany: Int): this.type = {
+    require(isOpen)
     val number = parent.setCounter.incrementAndGet()
     require(workSets.nonEmpty)
     val reference = workSets.last
@@ -80,15 +81,66 @@ class WorkoutExerciseBuilder(private val parent: WorkoutBuilder, private val exe
     this
   }
 
-  def end(u: Unit): WorkoutBuilder = {
-    parent.workSets ++= this.workSets
-    parent
+
+  // Dynamic builders using workout history to calculate targets
+
+  def weeklyProgressiveOverload(multiplier: Double): this.type = {
+    require(isOpen)
+    val number = parent.setCounter.incrementAndGet()
+    val lastTopSet = parent.workoutHistory.reverse.take(10).map(_.sets.filter(_.exercise == this.exercise).map(_.actual).maxBy(_.weight.grams)).head
+    val target = WorksetOps.createSet(Weight((lastTopSet.weight.grams * multiplier).toInt), lastTopSet.reps, lastTopSet.rpe)
+    workSets += WorkSet(exercise, target, target, number)
+    this
   }
+
 
 }
 
 object WorkoutBuilder {
-  def newWorkout(date: String)(implicit workoutHistory: Seq[Workout]): WorkoutBuilder = WorkoutBuilder(LocalDate.parse(date), workoutHistory)
+  def workout(implicit workoutHistory: Seq[Workout]): WorkoutDateBuilder =
+    (date: LocalDate) => WorkoutBuilder(date, workoutHistory)
   def apply(date: LocalDate, workoutHistory: Seq[Workout]): WorkoutBuilder = new WorkoutBuilder(date, workoutHistory)
 }
 
+object WorkoutDsl {
+
+  implicit def exerciseToWorkoutBuilder(value: WorkoutExerciseBuilder): WorkoutBuilder = {
+    require(value.isOpen)
+    val _ = value.parent.workSets ++= value.workSets
+    value.parent
+  }
+
+  implicit def WorkoutBuilderToWorkout(value: WorkoutExerciseBuilder): Workout = {
+    val workoutBuilder = if (value.isOpen) exerciseToWorkoutBuilder(value) else value.parent
+    Workout(workoutBuilder.date, workoutBuilder.workSets.toList)
+  }
+}
+
+trait RepsToRpeBuilder {
+  def x(reps: Int): RpeBuilder
+}
+
+
+trait RepsToSetsBuilder {
+  def x(reps: Int): SetRepetitionBuilder
+}
+
+trait SetRepetitionBuilder {
+  def sets(howMany: Int): WorkoutExerciseBuilder
+}
+
+trait RpeBuilder {
+  def at(rpe: Rpe): WorkoutExerciseBuilder
+}
+
+trait WeightBuilder {
+  def weight(weight: Weight): WorkoutExerciseBuilder
+}
+
+trait RepsToWeightBuilder {
+  def x(reps: Int): WeightBuilder
+}
+
+trait WorkoutDateBuilder {
+  def on(localDate: LocalDate): WorkoutBuilder
+}

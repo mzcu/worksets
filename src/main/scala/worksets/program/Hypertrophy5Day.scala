@@ -2,62 +2,53 @@ package worksets.program
 
 import java.time.LocalDate
 
+import worksets.Syntax._
 import worksets.calendar._
-import worksets.workout.WorkoutBuilder.newWorkout
+import worksets.workout.WorkoutBuilder.{workout}
 import worksets.{Rpe6, Rpe7, Rpe8, Rpe9, Weight, Workout}
+import worksets.workout.WorkoutDsl._
 
 /**
  * Created by on 22-07-20.
  */
 @SuppressWarnings(Array("org.wartremover.warts.All"))
-class Hypertrophy5Day(implicit val workoutHistory: Seq[Workout]) {
+class Hypertrophy5Day(implicit val workoutHistory: Seq[Workout]) extends WorkoutGenerator {
 
   import worksets.Predef._
 
-  private val squatDay = { date: LocalDate =>
+  private val squatDay: LocalDate => Workout = { date: LocalDate =>
     (
-      newWorkout(date.toString)
-        exercise CompetitionSquat withWorkingSet(Weight(80.0), 10, Rpe6) withWorkingSetRelative(1.0, 10, 3) end()
-        exercise CompetitionBench withWorkingSet(Weight(70.0), 10, Rpe6) withWorkingSetRelative(1.0, 10, 3) end()
-        exercise StandingPressStandard withWorkingSet(Weight(55.0), 6, Rpe6) withWorkingSetRelative(1.0, 6, 3) end()
-        endWorkout()
+      workout on date
+        exercise CompetitionSquat workset 80.kg x 10 at Rpe6 worksetRelative 1.0 x 10 sets 3
+        exercise CompetitionBench workset 70.kg x 10 at Rpe6 worksetRelative 1.0 x 10 sets 3
+        exercise StandingPressStandard workset 55.kg x 6 at Rpe6 worksetRelative 1.0 x 6 sets 3
       )
   }
 
-  private val deadLiftDay = { date: LocalDate =>
+  private val deadLiftDay: LocalDate => Workout = { date: LocalDate =>
     (
-      newWorkout(date.toString)
-        exercise CompetitionDeadlift withWorkingSet(Weight(110.0), 6, Rpe6) withWorkingSetRelative(1.1, 6, 4) end()
-        exercise PendlayRowStandard withWorkingSet(Weight(90.0), 4, Rpe8) withWorkingSetRelative(0.90, 6, 3) end()
-        exercise WideGripBench withWorkingSet(Weight(65.0), 10, Rpe7) withWorkingSetRelative(1.0, 10, 3) end()
-        endWorkout()
+      workout on date
+        exercise CompetitionDeadlift workset 110.kg x 6 at Rpe6 worksetRelative 1.1 x 6 sets 4
+        exercise PendlayRowStandard workset 90.0.kg x 4 at Rpe8 worksetRelative 0.90 x 6 sets 3
+        exercise WideGripBench workset 65.kg x 10 at Rpe7 worksetRelative 1.0 x 10 sets 3
       )
   }
 
-  private val lightDay = { date: LocalDate =>
+  private val lightDay: LocalDate => Workout = { date: LocalDate =>
     (
-      newWorkout(date.toString)
-        exercise FrontSquatStandard withWorkingSet(Weight(80.0), 10, Rpe8) withWorkingSetRelative(0.92, 10, 3) end()
-        exercise BodyWeightPullups withWorkingSet (Weight(80.0), 5, Rpe7) withWorkingSetRelative(1.0, 5, 3) end()
-        endWorkout()
+      workout on date
+        exercise FrontSquatStandard workset 80.kg x 10 at Rpe8 worksetRelative 0.92 x 10 sets 3
+        exercise BodyWeightPullups workset 80.kg x 5 at Rpe7 worksetRelative 1.0 x 5 sets 3
       )
   }
 
-
-  val weeklyProgram: List[(Day, LocalDate => Workout)] = List(
+  val weeklyProgram: WeeklyProgram = List(
     Monday -> squatDay,
     Tuesday -> deadLiftDay,
     Wednesday -> lightDay,
     Thursday -> squatDay,
     Friday -> deadLiftDay
   )
-
-  def workoutForNextWeek(startDate: LocalDate = LocalDate.now()): Seq[worksets.Workout] = {
-    weeklyProgram.map { case (dayOfWeek, dateToWorkout) =>
-      dateToWorkout(dayOfWeek.next(startDate))
-    }
-  }
-
 }
 
 object Hypertrophy5Day {

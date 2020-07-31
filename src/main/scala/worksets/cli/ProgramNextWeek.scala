@@ -1,6 +1,6 @@
 package worksets.cli
 
-import worksets.program.Hypertrophy5Day
+import worksets.program.{Hypertrophy5Day, WorkoutGenerator}
 import worksets.repository.ObjectStore
 import worksets.workout.WorkoutStats
 import WorkoutStats._
@@ -14,7 +14,8 @@ import scala.io.StdIn
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 object ProgramNextWeek extends App {
   val workoutHistory: Seq[worksets.Workout] = ObjectStore.load()
-  val week = Hypertrophy5Day(workoutHistory).workoutForNextWeek()
+  val currentProgram: WorkoutGenerator = Hypertrophy5Day(workoutHistory)
+  val week = currentProgram.generate()
   val weeklyVolume = week.map(volume).reduce(_ + _)
   val weeklyIntensity = {
     val weeklyIntensity = week.map(intensity)
