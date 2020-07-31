@@ -5,6 +5,7 @@ package object worksets {
 
   case class Weight(grams: Int) {
     def +(that: Weight): Weight = Weight(grams + that.grams)
+    def *(that: Int): Weight = Weight(grams*that)
   }
 
   object Weight {

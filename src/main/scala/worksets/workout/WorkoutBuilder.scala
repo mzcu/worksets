@@ -7,6 +7,7 @@ import worksets._
 import worksets.rpe.RpeOps
 
 import scala.collection.mutable.ListBuffer
+import scala.language.implicitConversions
 
 /**
  * Created by on 04-01-20.
@@ -110,7 +111,7 @@ object WorkoutDsl {
     value.parent
   }
 
-  implicit def WorkoutBuilderToWorkout(value: WorkoutExerciseBuilder): Workout = {
+  implicit def workoutExerciseBuilderToWorkout(value: WorkoutExerciseBuilder): Workout = {
     val workoutBuilder = if (value.isOpen) exerciseToWorkoutBuilder(value) else value.parent
     Workout(workoutBuilder.date, workoutBuilder.workSets.toList)
   }

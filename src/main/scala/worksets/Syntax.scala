@@ -5,7 +5,7 @@ package worksets
  */
 object Syntax {
   implicit class DoubleOps(value: Double) {
-    def kg(): Weight = Weight((value*1000).toInt)
+    def kg: Weight = Weight((value*1000).toInt)
   }
 
   implicit class IntOps(value: Int) {
