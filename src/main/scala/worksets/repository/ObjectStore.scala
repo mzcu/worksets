@@ -5,14 +5,15 @@ import java.time.LocalDate
 import java.util.Comparator
 import java.util.concurrent.atomic.AtomicInteger
 
-import worksets.Workout
+import worksets.{Workout, WorkoutHistory}
+import worksets.workouts.WorkoutRepository
 
 import scala.collection.immutable.Seq
 import scala.jdk.OptionConverters._
 
 // Not designed with thread safety in mind
 @SuppressWarnings(Array("org.wartremover.warts.All"))
-object ObjectStore {
+object ObjectStore extends WorkoutRepository {
 
   import io.circe._, io.circe.generic.auto._, io.circe.syntax._
 
@@ -24,7 +25,7 @@ object ObjectStore {
   private val currentVersion: AtomicInteger = new AtomicInteger
   private val emptyStore = ObjectStore(dbVersion, Seq.empty)
 
-  def load(): Seq[worksets.Workout] = {
+  override def load(): WorkoutHistory = {
     lastRevision().fold(Seq.empty[worksets.Workout]) { path =>
       val loaded = jawn.parseFile(path.toFile).getOrElse(Json.Null).as[ObjectStore].getOrElse(emptyStore).workouts
       currentVersion.set(path.getFileName.getFileName.toString.split(dbFilePrefix).reverse.headOption.getOrElse("0").replace(dbFileExt, "").toInt)
@@ -32,7 +33,7 @@ object ObjectStore {
     }
   }
 
-  def store(workouts: Seq[worksets.Workout]): Int = {
+  override def store(workouts: WorkoutHistory): Int = {
     val nextVersion = currentVersion.incrementAndGet();
     val dbFile = Files.createFile(dataDir.resolve(f"$dbFilePrefix$nextVersion%06d$dbFileExt"))
     val dbObject = ObjectStore(dbVersion, workouts)

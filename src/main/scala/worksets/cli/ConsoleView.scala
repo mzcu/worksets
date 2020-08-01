@@ -3,7 +3,7 @@ package worksets.cli
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-import worksets.{BarType, Barbell, CustomTempoMod, Exercise, ExerciseWithMods, NoBar, NoMods, Pause, RpeVal, Set, Tempo, TempoMod, TouchAndGo, TrapBar, Weight, WithMods, WorkSet, Workout}
+import worksets._
 
 import scala.annotation.tailrec
 
@@ -27,12 +27,19 @@ object ConsoleView {
 
   import Show._
 
-  implicit val WeightShow: Show[Weight] = it => s"${it.grams / 1000.0} kg"
+  implicit val WeightShow: Show[Weight] = it =>
+    if (it.grams < 1_000_000)
+      "%.0f kg".format(it.grams / 1000.0)
+    else
+      "%.1f t".format(it.grams / 1_000_000.0)
 
-  implicit val SetShow: Show[Set] = (it: Set) => s"${it.weight.show} x ${it.reps}" ++ (it.rpe match {
-    case RpeVal(value) => " @ " + value.toString
-    case _ => ""
-  })
+  implicit val SetShow: Show[Set] = {
+    case Set(_, 0, _) => "Not done"
+    case it => s"${it.weight.show} x ${it.reps}" ++ (it.rpe match {
+      case RpeVal(value) => " @ " + value.toString
+      case _ => ""
+    })
+  }
 
   implicit val WorkSetShow: Show[WorkSet] = (workset: WorkSet) => s"${workset.actual.show}"
 

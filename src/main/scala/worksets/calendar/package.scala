@@ -1,12 +1,19 @@
 package worksets
 
-import java.time.temporal.TemporalAdjusters
+import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder, SignStyle}
+import java.time.temporal.{IsoFields, TemporalAdjusters}
 import java.time.{DayOfWeek, LocalDate}
 
 /**
  * Created by on 26-07-20.
  */
 package object calendar {
+
+  val YearWeekFormatter: DateTimeFormatter = new DateTimeFormatterBuilder()
+    .parseCaseInsensitive.appendValue(IsoFields.WEEK_BASED_YEAR, 4, 10, SignStyle.EXCEEDS_PAD)
+    .appendLiteral("-W")
+    .appendValue(IsoFields.WEEK_OF_WEEK_BASED_YEAR, 2)
+    .toFormatter
 
   sealed class Day {
 

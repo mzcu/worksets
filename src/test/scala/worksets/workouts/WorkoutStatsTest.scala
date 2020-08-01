@@ -1,12 +1,10 @@
-package worksets.workout
+package worksets.workouts
 
 import java.time.LocalDate
 
 import worksets.Predef.{CompetitionDeadlift, CompetitionSquat}
-import worksets.Syntax._
-import worksets.workout.WorkoutBuilder.workout
-import worksets.{UnitSpec, Workout}
-import WorkoutDsl._
+import worksets.{UnitSpec, Workout, IntOps}
+import Dsl._
 
 
 /**

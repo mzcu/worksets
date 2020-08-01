@@ -7,8 +7,8 @@ import scala.collection.SortedSet
  */
 object WorksetOps {
 
-  // TODO: per-user config
-  private implicit val availablePlates = SortedSet(Plate.`1.25`, Plate.`2.5`, Plate.`5.0`, Plate.`10.0`, Plate.`20.0`)
+  private implicit val availablePlates: SortedSet[Plate] =
+    SortedSet(Plate.`1.25`, Plate.`2.5`, Plate.`5.0`, Plate.`10.0`, Plate.`20.0`)
 
 
   def createSet(weight: Weight, reps: Int, rpe: Rpe): Set = {

@@ -24,6 +24,9 @@ package object worksets {
   case class Set(weight: Weight, reps: Int, rpe: Rpe) {
     def *(count: Int): List[Set] = List.fill(count)(this)
   }
+  object Set {
+    val empty: Set = Set(0.kg, 0, RpeUndefined)
+  }
   case class WorkSet(exercise: ExerciseWithMods, target: Set, actual: Set, ord: Int = Int.MinValue, completed: Boolean = false)
 
   case class Exercise(name: String)
@@ -44,6 +47,8 @@ package object worksets {
                       override val kit: Option[KitMod] = None) extends Mods
 
   case class Workout(date: LocalDate, sets: List[WorkSet])
+
+  type WorkoutHistory = Seq[Workout]
 
   sealed trait BarType
 
@@ -80,4 +85,16 @@ package object worksets {
   case object WideGrip extends GripMod
 
   case object VeryWideGrip extends GripMod
+
+
+  implicit class DoubleOps(value: Double) {
+    def kg: Weight = Weight((value*1000).toInt)
+  }
+
+  implicit class IntOps(value: Int) {
+    def kg: Weight = Weight(value*1000)
+    def reps: Int = value
+    def rpe: RpeVal = RpeVal(value.toDouble)
+  }
+
 }

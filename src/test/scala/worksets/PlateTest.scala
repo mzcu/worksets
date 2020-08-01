@@ -1,7 +1,5 @@
 package worksets
 
-import worksets.Syntax.DoubleOps
-
 import scala.collection.SortedSet
 
 /**

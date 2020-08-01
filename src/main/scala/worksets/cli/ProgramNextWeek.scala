@@ -1,69 +1,65 @@
 package worksets.cli
 
+import java.time.LocalDate
+
+import worksets.WorkoutHistory
 import worksets.program.{Hypertrophy5Day, WorkoutGenerator}
 import worksets.repository.ObjectStore
-import worksets.workout.WorkoutStats
-import WorkoutStats._
+import worksets.workouts.WorkoutStats._
+import fansi._
+import worksets.calendar.YearWeekFormatter
 
-import scala.collection.mutable.ListBuffer
 import scala.io.StdIn
 
 /**
  * Created by on 03-01-20.
  */
 @SuppressWarnings(Array("org.wartremover.warts.All"))
-object ProgramNextWeek extends App {
-  val workoutHistory: Seq[worksets.Workout] = ObjectStore.load()
-  val currentProgram: WorkoutGenerator = Hypertrophy5Day(workoutHistory)
-  val week = currentProgram.generate()
-  val weeklyVolume = week.map(volume).reduce(_ + _)
-  val weeklyIntensity = {
-    val weeklyIntensity = week.map(intensity)
-    (weeklyIntensity.sum / weeklyIntensity.size).formatted("%.2f")
-  }
+object ProgramNextWeek {
+  def run(): Unit = {
 
-  import Show._
-  import ConsoleView._
+    implicit val workoutHistory: WorkoutHistory = ObjectStore.load()
 
-  println(s"Weekly total volume: ${weeklyVolume.show}")
-  println(s"Average workout intensity: $weeklyIntensity")
+    // Set desired program here
+    val currentProgram: WorkoutGenerator = new Hypertrophy5Day
 
-  implicit val buf: ListBuffer[ListBuffer[Char]] = ListBuffer()
-
-  def bufferColumns(block: String): Unit = {
-    var maxLen = Int.MinValue
-    block.linesWithSeparators.map(_.stripLineEnd).zipWithIndex.foreach { case (line, i) =>
-      if (buf.size == i) buf.append(ListBuffer())
-      buf(i).appendAll(line)
-      val currentLineLength = buf(i).size
-      maxLen = if (currentLineLength > maxLen) currentLineLength else maxLen
-    }
-    buf.mapInPlace(_.padToInPlace(maxLen + 10, ' ')).mapInPlace(_.append('\t'))
-  }
-
-  def printColumns(buf: ListBuffer[ListBuffer[Char]]): Unit = buf.foreach { line =>
-      println(line.mkString(""))
+    val startDate = LocalDate.now()
+    val week = currentProgram.generate(startDate)
+    val blockWeekNumber = week.head.date.format(YearWeekFormatter)
+    val weeklyVolume = week.map(volume).reduce(_ + _)
+    val weeklyIntensity = {
+      val weeklyIntensity = week.map(intensity)
+      (weeklyIntensity.sum / weeklyIntensity.size).formatted("%.2f")
     }
 
-  week.foreach { day =>
-    bufferColumns(
-      s"""
-         |Date: \t${day.date.show}
-         |Volume: \t${volume(day).show}
-         |Avg RPE: \t${intensity(day).formatted("%.1f")}
-         |
-         |${day.show}
-         |
-         |""".stripMargin)
+    import ConsoleView._
+    import Show._
+
+    println(s"${Bold.On(blockWeekNumber)} ${Underlined.On(currentProgram.programName)}\n")
+    println(s"Weekly total volume: ${Bold.On(weeklyVolume.show)}")
+    println(s"Average workout intensity: ${Bold.On(weeklyIntensity)}")
+
+    val columnBuffer = new ColumnBuffer
+
+    week.foreach { day =>
+      columnBuffer.appendColumn(
+        s"""
+           |Date: \t${day.date.show}
+           |Volume: \t${volume(day).show}
+           |Avg RPE: \t${intensity(day).formatted("%.1f")}
+           |
+           |${day.show}
+           |
+           |""".stripMargin)
+    }
+
+    println(columnBuffer.format)
+
+    if (StdIn.readLine("Save? y/[n]").toLowerCase.contains('y')) {
+      ObjectStore.store(workoutHistory ++ week)
+      println("Saved program for following week")
+    } else {
+      println("Back to the drawing board...")
+    }
   }
-
-  printColumns(buf)
-
-  if(StdIn.readLine("Save? y/[n]").toLowerCase.contains('y')) {
-    ObjectStore.store(workoutHistory ++ week)
-    println("Saved program for following week")
-  } else {
-    println("Back to the drawing board...")
-  }
-
 }

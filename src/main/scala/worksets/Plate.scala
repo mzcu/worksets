@@ -2,7 +2,6 @@ package worksets
 
 import scala.collection.SortedSet
 import scala.collection.mutable.ListBuffer
-import Syntax.DoubleOps
 
 case class Plate(weight: Weight) extends Ordered[Plate] {
   override def compare(that: Plate): Int = this.weight.grams.compareTo(that.weight.grams)

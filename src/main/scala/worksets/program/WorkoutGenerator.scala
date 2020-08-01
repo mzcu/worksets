@@ -2,8 +2,7 @@ package worksets.program
 
 import java.time.LocalDate
 
-import worksets.Workout
-import worksets.calendar.Day
+import worksets.WorkoutHistory
 
 /**
  * Created by on 31-07-20.
@@ -11,12 +10,13 @@ import worksets.calendar.Day
 
 trait WorkoutGenerator {
 
-  type WeeklyProgram = List[(Day, LocalDate => Workout)]
-
   val weeklyProgram: WeeklyProgram
-  def generate(startDate: LocalDate = LocalDate.now()): Seq[worksets.Workout] = {
+
+  def generate(startDate: LocalDate): WorkoutHistory = {
     weeklyProgram.map { case (dayOfWeek, dateToWorkout) =>
       dateToWorkout(dayOfWeek.next(startDate))
     }
   }
+
+  def programName: String = this.getClass.getSimpleName
 }

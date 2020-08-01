@@ -1,0 +1,47 @@
+package worksets.cli
+
+import worksets.WorkoutHistory
+import worksets.calendar.YearWeekFormatter
+import worksets.repository.ObjectStore
+import worksets.workouts.WorkoutStats
+
+/**
+ * Created by on 03-01-20.
+ */
+@SuppressWarnings(Array("org.wartremover.warts.All"))
+object ShowReport {
+
+  import ConsoleView._
+  import Show._
+
+  private def completedWorkouts: WorkoutHistory = {
+    val allWorkouts = ObjectStore.load()
+    allWorkouts.filter(_.sets.exists(_.completed))
+  }
+
+  def lastWorkouts(n: Int = 5): Unit = {
+    println(s"Last $n workout(s)")
+    completedWorkouts.map(_.show).foreach(Console.println)
+  }
+
+  def volumeProgression(workouts: Int = 5): Unit = {
+
+    val columnBuffer = new ColumnBuffer
+
+    val volumePerExercise = completedWorkouts.takeRight(workouts).flatMap { w =>
+      val weekString = w.date.format(YearWeekFormatter)
+      WorkoutStats.volumePerExercise(w).map(v => (v._1, weekString, v._2))
+    }.groupBy(_._1)
+
+    val exerciseVolumePerWeek = volumePerExercise.map { case (exercise, volumeData) =>
+      val weekGroups = volumeData.groupMapReduce(_._2)(_._3)(_ + _).toList.sortBy(_._1).map(t => s"${t._1}: ${t._2.show}").mkString("\n")
+      s"${exercise.show}\n$weekGroups"
+    }.toList
+
+    exerciseVolumePerWeek.foreach(columnBuffer.appendColumn)
+
+    println(columnBuffer.format)
+
+  }
+
+}
