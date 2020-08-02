@@ -1,14 +1,14 @@
 package worksets.cli
 
-import java.nio.file.{Files, Paths}
-import java.time.LocalDate
+import java.time.{Instant, LocalDate}
 
+import fansi._
 import worksets.WorkoutHistory
+import worksets.calendar.YearWeekFormatter
 import worksets.program.{Hypertrophy5Day, WorkoutGenerator}
+import worksets.report.{Browser, FilePublisher}
 import worksets.repository.ObjectStore
 import worksets.workouts.WorkoutStats._
-import fansi._
-import worksets.calendar.YearWeekFormatter
 
 import scala.io.StdIn
 
@@ -61,12 +61,13 @@ object ProgramNextWeek {
 
     val workoutPlan = textBuffer.format
     println(workoutPlan)
-    // TODO: store in printable format
-    //Files.write(Files.createFile(Paths.get("/tmp/adsas.txt")), workoutPlan.getBytes())
 
     if (StdIn.readLine("Save? y/[n]").toLowerCase.contains('y')) {
+      val publishedTo = FilePublisher.publish(blockWeekNumber + "_" + Instant.now(), workoutPlan)
       ObjectStore.store(workoutHistory ++ week)
-      println("Saved program for following week")
+      println("Saved program for following week. Opening report...")
+      Thread.sleep(1500)
+      Browser.browse(publishedTo.toUri)
     } else {
       println("Back to the drawing board...")
     }

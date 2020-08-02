@@ -8,6 +8,7 @@ scalaVersion := "2.13.3"
 wartremoverErrors ++= Warts.unsafe.filterNot(_ == Wart.DefaultArguments)
 
 libraryDependencies += "com.lihaoyi" % "ammonite" % "2.2.0" cross CrossVersion.full
+libraryDependencies += "com.lihaoyi" %% "scalatags" % "0.8.2"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0" % "test"
 
 val circeVersion = "0.13.0"
