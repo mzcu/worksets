@@ -26,7 +26,8 @@ object ShowReport {
 
   def volumeProgression(workouts: Int = 5): Unit = {
 
-    val columnBuffer = new ColumnBuffer
+    val textBuffer = new TextBuffer
+    textBuffer.colMode()
 
     val volumePerExercise = completedWorkouts.takeRight(workouts).flatMap { w =>
       val weekString = w.date.format(YearWeekFormatter)
@@ -38,9 +39,9 @@ object ShowReport {
       s"${exercise.show}\n$weekGroups"
     }.toList
 
-    exerciseVolumePerWeek.foreach(columnBuffer.appendColumn)
+    exerciseVolumePerWeek.foreach(textBuffer.appendColumn)
 
-    println(columnBuffer.format)
+    println(textBuffer.format)
 
   }
 

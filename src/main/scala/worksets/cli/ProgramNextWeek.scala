@@ -1,5 +1,6 @@
 package worksets.cli
 
+import java.nio.file.{Files, Paths}
 import java.time.LocalDate
 
 import worksets.WorkoutHistory
@@ -35,14 +36,19 @@ object ProgramNextWeek {
     import ConsoleView._
     import Show._
 
-    println(s"${Bold.On(blockWeekNumber)} ${Underlined.On(currentProgram.programName)}\n")
-    println(s"Weekly total volume: ${Bold.On(weeklyVolume.show)}")
-    println(s"Average workout intensity: ${Bold.On(weeklyIntensity)}")
+    val textBuffer = new TextBuffer
 
-    val columnBuffer = new ColumnBuffer
+    textBuffer.appendRow(s"${Bold.On(blockWeekNumber)} ${Underlined.On(currentProgram.programName)}")
+    textBuffer.appendRow("")
+    textBuffer.appendRow(s"Weekly total volume: ${Bold.On(weeklyVolume.show)}")
+    textBuffer.appendRow(s"Average workout intensity: ${Bold.On(weeklyIntensity)}")
+    textBuffer.appendRow("")
+    textBuffer.appendRow("")
+
+    textBuffer.colMode()
 
     week.foreach { day =>
-      columnBuffer.appendColumn(
+      textBuffer.appendColumn(
         s"""
            |Date: \t${day.date.show}
            |Volume: \t${volume(day).show}
@@ -53,7 +59,10 @@ object ProgramNextWeek {
            |""".stripMargin)
     }
 
-    println(columnBuffer.format)
+    val workoutPlan = textBuffer.format
+    println(workoutPlan)
+    // TODO: store in printable format
+    //Files.write(Files.createFile(Paths.get("/tmp/adsas.txt")), workoutPlan.getBytes())
 
     if (StdIn.readLine("Save? y/[n]").toLowerCase.contains('y')) {
       ObjectStore.store(workoutHistory ++ week)
