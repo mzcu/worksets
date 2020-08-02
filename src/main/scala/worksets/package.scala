@@ -1,12 +1,11 @@
 import java.time.LocalDate
 
+import scala.reflect.ClassTag
+
 
 package object worksets {
 
-  case class Weight(grams: Int) {
-    def +(that: Weight): Weight = Weight(grams + that.grams)
-    def *(that: Int): Weight = Weight(grams*that)
-  }
+  case class Weight(grams: Int) extends AnyVal
 
   object Weight {
     def apply(kilos: Double): Weight = Weight((kilos * 1000).toInt)
@@ -95,6 +94,24 @@ package object worksets {
     def kg: Weight = Weight(value*1000)
     def reps: Int = value
     def rpe: RpeVal = RpeVal(value.toDouble)
+    def pct: Percent = Percent(value)
+  }
+
+  case class Percent(value: Int) extends AnyVal {
+    def asRatio: Double = value/100.0
+  }
+
+  // type-classes
+
+  trait Quantity[T] {
+    def *(multiplier: Double): T
+    def +(summand: T): T
+    def *[X: ClassTag](percent: Percent): T = this.*(percent.asRatio)
+  }
+
+  implicit class WeightIsAQuantity(val value: Weight) extends Quantity[Weight] {
+    override def +(that: Weight): Weight = Weight(this.value.grams + that.grams)
+    override def *(that: Double): Weight = Weight((this.value.grams * that).toInt)
   }
 
 }

@@ -43,13 +43,16 @@ object Dsl {
       }
     }
 
-    def worksetRelative(multiplier: Double): RepsToSetsBuilder = (reps: Int) => (howMany: Int) => {
+    def repeat(times: Int): WorkoutExerciseBuilder =
+      this worksetRelative 100.pct x workSets.last.target.reps sets times
+
+    def worksetRelative(multiplier: Percent): RepsToSetsBuilder = (reps: Int) => (howMany: Int) => {
       require(isOpen)
       val number = parent.setCounter.incrementAndGet()
       require(workSets.nonEmpty)
       val reference = workSets.last.target
-      val modifiedWeight = Weight((reference.weight.grams * multiplier).toInt)
-      val modifiedPct = RpeOps.toPct(reference.reps, reference.rpe) * multiplier
+      val modifiedWeight = reference.weight * multiplier
+      val modifiedPct = RpeOps.toPct(reference.reps, reference.rpe) * multiplier.asRatio
       val modifiedRpe = RpeOps.toRpe(reps, modifiedPct)
       val target = WorksetOps.createSet(modifiedWeight, reps, modifiedRpe)
       workSets ++= List.fill(howMany)(WorkSet(exercise, target, target, number))

@@ -1,5 +1,6 @@
 package worksets.cli
 
+import worksets.WeightIsAQuantity
 import worksets.WorkoutHistory
 import worksets.calendar.YearWeekFormatter
 import worksets.repository.ObjectStore

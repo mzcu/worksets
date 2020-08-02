@@ -3,6 +3,7 @@ package worksets.cli
 import java.time.{Instant, LocalDate}
 
 import fansi._
+import worksets.WeightIsAQuantity
 import worksets.WorkoutHistory
 import worksets.calendar.YearWeekFormatter
 import worksets.program.{Hypertrophy5Day, WorkoutGenerator}

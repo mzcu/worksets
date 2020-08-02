@@ -16,8 +16,8 @@ class WorkoutStatsTest extends UnitSpec {
   private val day = LocalDate.now()
   implicit private val history: Seq[Workout] = Seq.empty
   val testWorkout: Workout = (workout on day
-    exercise CompetitionSquat workset 100.kg x 10 at 8.rpe worksetRelative 1.0 x 10 sets 4
-    exercise CompetitionDeadlift workset 100.kg x 6 at 7.rpe worksetRelative 1.0 x 6 sets 4
+    exercise CompetitionSquat workset 100.kg x 10 at 8.rpe worksetRelative 100.pct x 10 sets 4
+    exercise CompetitionDeadlift workset 100.kg x 6 at 7.rpe worksetRelative 100.pct x 6 sets 4
     )
 
   it should "calculate correct volume" in {
