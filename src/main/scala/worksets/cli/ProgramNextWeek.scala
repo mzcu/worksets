@@ -3,13 +3,12 @@ package worksets.cli
 import java.time.{Instant, LocalDate}
 
 import fansi._
-import worksets.WeightIsAQuantity
 import worksets.WorkoutHistory
 import worksets.calendar.YearWeekFormatter
 import worksets.program.{Hypertrophy5Day, WorkoutGenerator}
 import worksets.report.{Browser, FilePublisher}
 import worksets.repository.ObjectStore
-import worksets.workouts.WorkoutStats._
+import worksets.support.ListMonoid
 
 import scala.io.StdIn
 
@@ -26,11 +25,11 @@ object ProgramNextWeek {
     val currentProgram: WorkoutGenerator = new Hypertrophy5Day
 
     val startDate = LocalDate.now()
-    val week = currentProgram.generate(startDate)
+    val week = currentProgram.generate(startDate).toList
     val blockWeekNumber = week.head.date.format(YearWeekFormatter)
-    val weeklyVolume = week.map(volume).reduce(_ + _)
+    val weeklyVolume = week.map(_.volume).combineAll
     val weeklyIntensity = {
-      val weeklyIntensity = week.map(intensity)
+      val weeklyIntensity = week.map(_.intensity)
       (weeklyIntensity.sum / weeklyIntensity.size).formatted("%.2f")
     }
 
@@ -52,8 +51,8 @@ object ProgramNextWeek {
       textBuffer.appendColumn(
         s"""
            |Date: \t${day.date.show}
-           |Volume: \t${volume(day).show}
-           |Avg RPE: \t${intensity(day).formatted("%.1f")}
+           |Volume: \t${day.volume.show}
+           |Avg RPE: \t${day.intensity.formatted("%.1f")}
            |
            |${day.show}
            |

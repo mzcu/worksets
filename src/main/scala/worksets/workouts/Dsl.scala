@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import worksets._
 import worksets.rpe.RpeOps
+import worksets.support.{IntPercentOps, Percent}
 
 import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
@@ -51,7 +52,7 @@ object Dsl {
       val number = parent.setCounter.incrementAndGet()
       require(workSets.nonEmpty)
       val reference = workSets.last.target
-      val modifiedWeight = reference.weight * multiplier
+      val modifiedWeight = multiplier * reference.weight
       val modifiedPct = RpeOps.toPct(reference.reps, reference.rpe) * multiplier.asRatio
       val modifiedRpe = RpeOps.toRpe(reps, modifiedPct)
       val target = WorksetOps.createSet(modifiedWeight, reps, modifiedRpe)

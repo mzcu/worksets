@@ -3,6 +3,7 @@ package worksets.program
 import worksets._
 import worksets.Predef._
 import worksets.calendar._
+import worksets.support.IntPercentOps
 import worksets.workouts.Dsl._
 
 /**

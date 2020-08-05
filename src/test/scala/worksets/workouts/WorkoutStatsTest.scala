@@ -1,10 +1,12 @@
 package worksets.workouts
 
 import java.time.LocalDate
+import scala.language.postfixOps
 
-import worksets.Predef.{CompetitionDeadlift, CompetitionSquat}
-import worksets.{UnitSpec, Workout, IntOps}
+import worksets.Predef.{CompetitionSquat, CompetitionDeadlift}
+import worksets.{IntWorksetOps, UnitSpec, Workout}
 import Dsl._
+import worksets.support._
 
 
 /**
@@ -20,14 +22,14 @@ class WorkoutStatsTest extends UnitSpec {
     exercise CompetitionDeadlift workset 100.kg x 6 at 7.rpe worksetRelative 100.pct x 6 sets 4
     )
 
-  it should "calculate correct volume" in {
-    val actualVolume = WorkoutStats.volume(testWorkout)
-    actualVolume shouldBe (100*10*5 + 100*6*5).kg
+  it should "calculate correct volume per exercise" in {
+    val actualVolumePerExercise = WorkoutStats.volumePerExercise(testWorkout)
+    actualVolumePerExercise should contain theSameElementsAs List(
+      (CompetitionSquat, 5000 kg),
+      (CompetitionDeadlift, 3000 kg)
+    )
+
   }
 
-  it should "calculate correct intensity" in {
-    val actualIntensity = WorkoutStats.intensity(testWorkout)
-    actualIntensity shouldBe (7.5 +- .01)
-  }
 
 }
