@@ -4,6 +4,7 @@ import worksets.WeightIsAQuantity
 import worksets.WorkoutHistory
 import worksets.calendar.YearWeekFormatter
 import worksets.repository.ObjectStore
+import worksets.support.TextBuffer
 import worksets.workouts.WorkoutStats
 
 /**

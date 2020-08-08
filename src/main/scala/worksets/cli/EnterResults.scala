@@ -1,7 +1,7 @@
 package worksets.cli
 
+import worksets.parser.{SetLiteral, WorkoutParserError, WorksetMod}
 import worksets.repository.ObjectStore
-import worksets.{RpeVal, Weight}
 
 import scala.io.StdIn
 
@@ -15,6 +15,9 @@ object EnterResults {
   import Show._
 
   def interact(): Unit = {
+
+
+    val worksetLineReader = WorkoutInput
     val allWorkouts = ObjectStore.load()
     val firstOpenWorkoutIndex = allWorkouts.indexWhere(_.sets.exists(!_.completed))
 
@@ -30,21 +33,28 @@ object EnterResults {
         println(exercise.exercise.show)
         print("Target: ")
         println(exercise.target.show)
-        val actual = StdIn.readLine("> ")
-        val updatedSet = actual.split(Array('x', '@')).toList match {
-          case weight :: reps :: rpe :: Nil => worksets.Set(Weight(weight.toDouble), reps.toInt, RpeVal(rpe.toDouble))
-          case "-" :: Nil => worksets.Set.empty // skipped a set
-          case _ => exercise.actual // as planned
+        val actual = worksetLineReader.reader.readLine("> ", null, s"${exercise.target.show}")
+        val updatedSet = worksetLineReader.parser.parseLine(actual) match {
+          case SetLiteral(set) => set
+          case WorksetMod(_, mods) => mods.foldLeft(exercise.actual)((s, mod) => mod.modify(s))
+          case WorkoutParserError(msg) =>
+            Console.err.println(s"Parse error, will not change the set. Message: '$msg'")
+            exercise.actual
         }
         exercise.copy(actual = updatedSet, completed = true)
       }
 
       val completed = firstOpenWorkoutSheet.copy(sets = completedSets)
-
       val updatedWorkout = allWorkouts.patch(firstOpenWorkoutIndex, Seq(completed), 1)
-      ObjectStore.store(updatedWorkout)
 
-      println("Worksheet closed")
+      println(completed.show)
+      if (StdIn.readLine("Save? y/[n]").toLowerCase.contains('y')) {
+        ObjectStore.store(updatedWorkout)
+        println("Worksheet closed")
+      } else {
+        println("Aborted")
+      }
+
     }
   }
 

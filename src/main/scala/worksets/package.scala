@@ -112,6 +112,10 @@ package object worksets {
 
   implicit class DoubleWorksetOps(value: Double) {
     def kg: Weight = Weight((value*1000).toInt)
+    def rpe: Rpe = value match {
+      case 0d | Double.NaN => RpeUndefined
+      case d => RpeVal(d)
+    }
   }
 
   implicit class IntWorksetOps(value: Int) {

@@ -1,4 +1,6 @@
-package worksets.cli
+package worksets.support
+
+import worksets.support.TextBuffer._
 
 import scala.collection.mutable.ListBuffer
 
@@ -36,8 +38,17 @@ class TextBuffer {
   def asSeq: Seq[String] = buf.map(_.mkString("")).toList
 
 
+  def +(other: TextBuffer): TextBuffer = {
+    val tb = new TextBuffer
+    tb.buf.appendAll(this.buf)
+    tb.buf.appendAll(other.buf)
+    tb.mode = other.mode
+    tb
+  }
+}
+
+object TextBuffer {
   sealed trait Mode
   object Row extends Mode
   case class Col(fromIndex: Int) extends Mode
-
 }

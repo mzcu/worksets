@@ -8,7 +8,7 @@ import worksets.calendar.YearWeekFormatter
 import worksets.program.{Hypertrophy5Day, WorkoutGenerator}
 import worksets.report.{Browser, FilePublisher}
 import worksets.repository.ObjectStore
-import worksets.support.ListMonoid
+import worksets.support.{ListMonoid, TextBuffer}
 
 import scala.io.StdIn
 

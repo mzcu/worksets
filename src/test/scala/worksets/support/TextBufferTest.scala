@@ -1,4 +1,4 @@
-package worksets.cli
+package worksets.support
 
 import worksets.UnitSpec
 
