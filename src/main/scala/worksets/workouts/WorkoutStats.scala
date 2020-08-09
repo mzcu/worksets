@@ -15,4 +15,15 @@ object WorkoutStats {
     }.toList
   }
 
+  def topSetPerExercise(workout: Workout): Seq[(ExerciseWithMods, worksets.Set)] =
+    workout.sets.groupMapReduce(_.exercise)(_.actual)((a, b) => if (a.weight.grams > b.weight.grams) a else b).toList
+
+  def e1rmPerExercise(workout: Workout): Seq[(ExerciseWithMods, Weight)] =
+    topSetPerExercise(workout).flatMap { case (exercise, set) =>
+      set.rpe match {
+        case worksets.RpeUndefined => Seq.empty
+        case RpeVal(_) => Seq((exercise, worksets.rpe.RpeOps.e1rm(set.weight, set.reps, set.rpe)))
+      }
+    }
+
 }

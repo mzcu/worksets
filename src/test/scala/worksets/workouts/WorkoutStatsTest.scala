@@ -1,12 +1,13 @@
 package worksets.workouts
 
 import java.time.LocalDate
-import scala.language.postfixOps
 
-import worksets.Predef.{CompetitionSquat, CompetitionDeadlift}
-import worksets.{IntWorksetOps, UnitSpec, Workout}
-import Dsl._
+import worksets.Predef.{CompetitionDeadlift, CompetitionSquat}
 import worksets.support._
+import worksets.workouts.Dsl._
+import worksets.{IntWorksetOps, UnitSpec, Workout}
+
+import scala.language.postfixOps
 
 
 /**
@@ -19,7 +20,7 @@ class WorkoutStatsTest extends UnitSpec {
   implicit private val history: Seq[Workout] = Seq.empty
   val testWorkout: Workout = (workout on day
     exercise CompetitionSquat workset 100.kg x 10 at 8.rpe worksetRelative 100.pct x 10 sets 4
-    exercise CompetitionDeadlift workset 100.kg x 6 at 7.rpe worksetRelative 100.pct x 6 sets 4
+    exercise CompetitionDeadlift workset 110.kg x 6 at 6.rpe worksetRelative 90.pct x 6 sets 4
     )
 
   it should "calculate correct volume per exercise" in {
@@ -28,7 +29,20 @@ class WorkoutStatsTest extends UnitSpec {
       (CompetitionSquat, 5000 kg),
       (CompetitionDeadlift, 3000 kg)
     )
+  }
 
+  it should "calculate top set per exercise" in {
+    val actualTopSets = WorkoutStats.topSetPerExercise(testWorkout)
+    actualTopSets should contain theSameElementsAs List(
+      (CompetitionSquat, worksets.Set(100.kg, 10, 8.rpe)),
+      (CompetitionDeadlift, worksets.Set(110.kg, 6, 7.rpe)),
+    )
+  }
+
+  it should "calculate e1rm per exercise" in {
+    val actualE1RMs = WorkoutStats.e1rmPerExercise(testWorkout)
+    actualE1RMs.filter(_._1 == CompetitionSquat).head._2.grams should be (147000 +- 500)
+    actualE1RMs.filter(_._1 == CompetitionDeadlift).head._2.grams should be (149000 +- 500)
   }
 
 
