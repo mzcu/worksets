@@ -17,7 +17,7 @@ object EnterResults {
   def interact(): Unit = {
 
 
-    val worksetLineReader = WorkoutInput
+    val workoutInput = WorkoutInput
     val allWorkouts = ObjectStore.load()
     val firstOpenWorkoutIndex = allWorkouts.indexWhere(_.sets.exists(!_.completed))
 
@@ -33,8 +33,8 @@ object EnterResults {
         println(exercise.exercise.show)
         print("Target: ")
         println(exercise.target.show)
-        val actual = worksetLineReader.reader.readLine("> ", null, s"${exercise.target.show}")
-        val updatedSet = worksetLineReader.parser.parseLine(actual) match {
+        val actual = workoutInput.reader.readLine("> ", null, s"${exercise.target.show}")
+        val updatedSet = workoutInput.parser.parseLine(actual) match {
           case SetLiteral(set) => set
           case WorksetMod(_, mods) => mods.foldLeft(exercise.actual)((s, mod) => mod.modify(s))
           case WorkoutParserError(msg) =>

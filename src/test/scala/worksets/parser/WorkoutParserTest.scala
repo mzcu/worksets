@@ -33,10 +33,18 @@ class WorkoutParserTest extends UnitSpec {
     }
   }
 
-  it should "parse set modifier (all mods)" in {
+  it should "parse set modifier (multiple mods)" in {
     inside(parseLine("~set wei-1 rep+1 rpe-1")) { case WorksetMod(scope, mods) =>
       scope should be theSameInstanceAs SetScope
       mods should contain theSameElementsInOrderAs List(WeightMod(-1.0), RepsMod(1), RpeMod(-1.0))
+    }
+  }
+
+
+  it should "parse set modifier (skip mod)" in {
+    inside(parseLine("~set -")) { case WorksetMod(scope, mods) =>
+      scope should be theSameInstanceAs SetScope
+      mods should contain theSameElementsInOrderAs List(SkipMod.value)
     }
   }
 

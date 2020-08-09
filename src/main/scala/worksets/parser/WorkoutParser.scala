@@ -23,6 +23,8 @@ object WorkoutParser extends RegexParsers {
 
   def repsMod: Parser[RepsMod] = "rep" ~ double ^^ { case _ ~ double => RepsMod(double.toInt) }
 
+  def skipMod: Parser[SkipMod] = "-" ^^ (_ => SkipMod.value)
+
   def qualifier: Parser[ModifierScope] = "~" ~ "(exe|set)".r ^^ { case _ ~ scope =>
     scope match {
       case "exe" => ExerciseScope
@@ -34,12 +36,13 @@ object WorkoutParser extends RegexParsers {
     SetLiteral(worksets.Set(w.kg, reps, intensity.rpe))
   }
 
-  def worksetMod: Parser[WorksetMod] = (qualifier ~ (weightMod.? ~ repsMod.? ~ rpeMod.?)) ^^ { mod =>
+  def worksetMod: Parser[WorksetMod] = (qualifier ~ (skipMod.? ~ weightMod.? ~ repsMod.? ~ rpeMod.?)) ^^ { mod =>
     val scope = mod._1
     val rpe = mod._2._2.toList
     val rep = mod._2._1._2.toList
-    val wei = mod._2._1._1.toList
-    WorksetMod(scope, wei ::: rep ::: rpe)
+    val wei = mod._2._1._1._2.toList
+    val ski = mod._2._1._1._1.toList
+    WorksetMod(scope, ski ::: wei ::: rep ::: rpe)
   }
 
   def parseLine(input: String): WorkoutParserResult = parse(workset | worksetMod, input) match {
@@ -62,6 +65,12 @@ case class WeightMod(value: Double) extends SetModifier {
 }
 case class RepsMod(value: Int) extends SetModifier {
   override def modify(set: worksets.Set): worksets.Set = set.copy(reps = set.reps + value)
+}
+class SkipMod extends SetModifier {
+  override def modify(set: worksets.Set): worksets.Set = worksets.Set.empty
+}
+object SkipMod {
+  val value = new SkipMod
 }
 
 sealed trait ModifierScope
