@@ -100,6 +100,17 @@ object Dsl {
       this
     }
 
+    def worksetByE1RM(percent: Percent): RepsBuilder = (reps: Int) => {
+      require(isOpen)
+      val e1rm = parent.workoutHistory.filter(_.sets.exists(_.exercise == exercise)).takeRight(10)
+        .flatMap(WorkoutStats.e1rmPerExercise).filter(_._1 == exercise).minBy(-_._2.grams)._2
+      val weight = percent*e1rm
+      val newRpe = RpeOps.toRpe(reps, percent.asRatio)
+      val target = WorksetOps.createSet(weight, reps, newRpe)
+      val number = parent.setCounter.incrementAndGet()
+      workSets += WorkSet(self.exercise, target, target, number)
+      self
+    }
 
   }
 
@@ -121,6 +132,10 @@ object Dsl {
 
   trait RpeBuilder {
     def at(rpe: Rpe): WorkoutExerciseBuilder
+  }
+
+  trait RepsBuilder {
+    def x(reps: Int): WorkoutExerciseBuilder
   }
 
   trait WeightBuilder {

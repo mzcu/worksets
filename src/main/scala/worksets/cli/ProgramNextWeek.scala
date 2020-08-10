@@ -5,7 +5,7 @@ import java.time.{Instant, LocalDate}
 import fansi._
 import worksets.WorkoutHistory
 import worksets.calendar.YearWeekFormatter
-import worksets.program.{Hypertrophy5Day, WorkoutGenerator}
+import worksets.program.{Hypertrophy5Day, StrengthIntro4Day, WorkoutGenerator}
 import worksets.report.{Browser, FilePublisher}
 import worksets.repository.ObjectStore
 import worksets.support.{ListMonoid, TextBuffer}
@@ -22,7 +22,7 @@ object ProgramNextWeek {
     implicit val workoutHistory: WorkoutHistory = ObjectStore.load()
 
     // Set desired program here
-    val currentProgram: WorkoutGenerator = new Hypertrophy5Day
+    val currentProgram: WorkoutGenerator = new StrengthIntro4Day
 
     val startDate = LocalDate.now()
     val week = currentProgram.generate(startDate).toList

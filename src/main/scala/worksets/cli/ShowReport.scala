@@ -26,7 +26,7 @@ object ShowReport {
     completedWorkouts.map(_.show).foreach(Console.println)
   }
 
-  def volumeProgression(workouts: Int = 5): Unit = {
+  def volumeProgression(workouts: Int = 10): Unit = {
 
     val textBuffer = new TextBuffer
     textBuffer.colMode()
@@ -47,7 +47,7 @@ object ShowReport {
 
   }
 
-  def e1rm(workouts: Int = 5): Unit = {
+  def e1rm(workouts: Int = 10): Unit = {
 
     val textBuffer = new TextBuffer
     textBuffer.colMode()
@@ -58,7 +58,7 @@ object ShowReport {
     }.groupBy(_._1)
 
     val e1rmPerWeek = e1rmPerExercise.map { case (exercise, e1rmData) =>
-      val weekGroups = e1rmData.groupMapReduce(_._2)(_._3)(_ + _).toList.sortBy(_._1).map(t => s"${t._1}: ${t._2.show}").mkString("\n")
+      val weekGroups = e1rmData.groupMapReduce(_._2)(_._3)((a, b) => if (a.grams > b.grams ) a else b).toList.sortBy(_._1).map(t => s"${t._1}: ${t._2.show}").mkString("\n")
       s"${exercise.show}\n$weekGroups"
     }.toList
 
@@ -69,6 +69,7 @@ object ShowReport {
 
   def main(args: Array[String]): Unit = {
     e1rm()
+    volumeProgression()
   }
 
 }
