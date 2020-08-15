@@ -29,7 +29,7 @@ object ConsoleView {
 
   implicit val WeightShow: Show[Weight] = it =>
     if (it.grams < 1_000_000)
-      "%.0f kg".format(it.grams / 1000.0)
+      "%.1f kg".format(it.grams / 1000.0)
     else
       "%.1f t".format(it.grams / 1_000_000.0)
 
