@@ -1,11 +1,12 @@
 package worksets.cli
 
-import worksets.WeightIsAQuantity
-import worksets.WorkoutHistory
 import worksets.calendar.YearWeekFormatter
 import worksets.repository.ObjectStore
 import worksets.support.TextBuffer
 import worksets.workouts.WorkoutStats
+import worksets.{WeightIsAQuantity, WorkoutHistory}
+
+import scala.math.Ordering.Implicits.infixOrderingOps
 
 /**
  * Created by on 03-01-20.
@@ -58,7 +59,7 @@ object ShowReport {
     }.groupBy(_._1)
 
     val e1rmPerWeek = e1rmPerExercise.map { case (exercise, e1rmData) =>
-      val weekGroups = e1rmData.groupMapReduce(_._2)(_._3)((a, b) => if (a.grams > b.grams ) a else b).toList.sortBy(_._1).map(t => s"${t._1}: ${t._2.show}").mkString("\n")
+      val weekGroups = e1rmData.groupMapReduce(_._2)(_._3)(_ max _).toList.sortBy(_._1).map(t => s"${t._1}: ${t._2.show}").mkString("\n")
       s"${exercise.show}\n$weekGroups"
     }.toList
 

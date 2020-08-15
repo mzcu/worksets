@@ -15,6 +15,7 @@ package object worksets {
   implicit class WeightIsAQuantity(val value: Weight) extends Quantity[Weight] {
     override def +(that: Weight): Weight = Weight(this.value.grams + that.grams)
     override def *(that: Double): Weight = Weight((this.value.grams * that).toInt)
+    override def compare(that: Weight): Int = value.grams.compareTo(that.grams)
   }
 
   implicit object WeightIsAMonoid extends Monoid[Weight] {

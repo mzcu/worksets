@@ -2,9 +2,8 @@ package worksets
 
 package object support {
 
-  trait Quantity[T] {
+  trait Quantity[T] extends Ordered[T] {
     def *(multiplier: Double): T
-
     def +(summand: T): T
   }
 
