@@ -1,6 +1,6 @@
 package worksets.parser
 
-import worksets.{IntWorksetOps, UnitSpec}
+import worksets.{DoubleWorksetOps, IntWorksetOps, UnitSpec}
 
 /**
  * Created by on 08-08-20.
@@ -19,8 +19,8 @@ class WorkoutParserTest extends UnitSpec {
   }
 
   it should "parse set literal 2" in {
-    inside(parseLine("100 kg  x 1 @ 7.0")) { case SetLiteral(s) =>
-      s.weight should be (100.kg)
+    inside(parseLine("100.5 kg  x 1 @ 7.0")) { case SetLiteral(s) =>
+      s.weight should be (100.5.kg)
       s.reps should be (1)
       s.rpe should be (7.rpe)
     }

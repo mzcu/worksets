@@ -32,7 +32,7 @@ object WorkoutParser extends RegexParsers {
     }
   }
 
-  def workset: Parser[SetLiteral] = (int <~ "kg".?) ~ ("x" ~> int) ~ ("@" ~> double) ^^ { case w ~ reps ~ intensity =>
+  def workset: Parser[SetLiteral] = (double <~ "kg".?) ~ ("x" ~> int) ~ ("@" ~> double) ^^ { case w ~ reps ~ intensity =>
     SetLiteral(worksets.Set(w.kg, reps, intensity.rpe))
   }
 
