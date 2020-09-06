@@ -35,7 +35,7 @@ class WorkoutStatsTest extends UnitSpec {
     val actualTopSets = WorkoutStats.topSetPerExercise(testWorkout)
     actualTopSets should contain theSameElementsAs List(
       (CompetitionSquat, worksets.Set(100.kg, 10, 8.rpe)),
-      (CompetitionDeadlift, worksets.Set(110.kg, 6, 7.rpe)),
+      (CompetitionDeadlift, worksets.Set(110.kg, 6, 6.rpe)),
     )
   }
 
