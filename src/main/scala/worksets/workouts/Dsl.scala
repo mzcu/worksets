@@ -112,6 +112,19 @@ object Dsl {
       self
     }
 
+
+    def worksetByE1RM(rpe: Rpe): RepsBuilder = (reps: Int) => {
+      require(isOpen)
+      val e1rm = parent.workoutHistory.filter(_.sets.exists(_.exercise == exercise)).takeRight(10)
+        .flatMap(WorkoutStats.e1rmPerExercise).filter(_._1 == exercise).minBy(-_._2.grams)._2
+      val percent = RpeOps.toPct(reps, rpe)
+      val weight = e1rm*percent
+      val target = WorksetOps.createSet(weight, reps, rpe)
+      val number = parent.setCounter.incrementAndGet()
+      workSets += WorkSet(self.exercise, target, target, number)
+      self
+    }
+
   }
 
   def workout(implicit workoutHistory: WorkoutHistory): WorkoutDateBuilder =
