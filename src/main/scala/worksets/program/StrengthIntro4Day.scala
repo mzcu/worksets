@@ -22,7 +22,7 @@ class StrengthIntro4Day(implicit private val workoutHistory: WorkoutHistory) ext
     (
       workout on date
         exercise CompetitionDeadlift worksetByE1RM 90.pct x 1 worksetRelative 93.pct x 3 sets 3
-        exercise PendlayRowStandard workset 90.0.kg x 4 at Rpe8 worksetRelative 90.pct x 4 sets 3
+        exercise PendlayRowStandard workset 90.0.kg x 4 at 8.rpe worksetRelative 90.pct x 4 sets 3
       )
   }
 

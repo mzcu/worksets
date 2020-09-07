@@ -1,8 +1,7 @@
 package worksets.rpe
 
-import worksets.{DoubleWorksetOps, Rpe, Rpe10, Rpe6, Rpe7, Rpe8, Rpe9, RpeUndefined, RpeVal, Weight}
+import worksets.{DoubleWorksetOps, Rpe, RpeVal, Weight}
 
-import scala.collection.Map
 import scala.math.BigDecimal.double2bigDecimal
 
 /**
@@ -27,9 +26,8 @@ import scala.math.BigDecimal.double2bigDecimal
  *
  * </pre>
  */
-@SuppressWarnings(Array("org.wartremover.warts.All"))
+@SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
 object RpeOps {
-
 
   def toPct(reps: Int, rpe: Rpe): Double = tuschererRpeApprox(reps, rpe)
 
@@ -56,14 +54,12 @@ object RpeOps {
    */
   private def evaluatePolyAt(coefficients: List[Double], x: Double): Double = coefficients.reduceRight(_ + x * _)
 
-  private def tuschererRpeApprox(reps: Int, rpe: Rpe): Double = {
-    rpe match {
-        // TODO: add smart constructor for RpeVal so all instances have acceptable range
-      case RpeVal(rpeVal) if 5.0 <= rpeVal && rpeVal <= 10.0 =>
+  private def tuschererRpeApprox(reps: Int, rpe: Rpe): Double = rpe match {
+      case RpeVal(rpeVal) =>
+        require(reps > 0 && reps <= 15, "RPE-percentage conversion only makes sense for reps between 1 and 15")
         val x = reps.toDouble + 10.0 - rpeVal
         BigDecimal(evaluatePolyAt(tuschererPolyCoefficients, x)).setScale(3, BigDecimal.RoundingMode.HALF_UP).toDouble
       case _ => 0.0
     }
-  }
 
 }

@@ -1,7 +1,7 @@
 package worksets.rpe
 
 import org.scalactic.TolerantNumerics
-import worksets.{DoubleWorksetOps, IntWorksetOps, Rpe10, RpeVal, UnitSpec, Weight}
+import worksets.{DoubleWorksetOps, IntWorksetOps, RpeVal, UnitSpec, Weight}
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class RpeOpsTest extends UnitSpec {
@@ -9,15 +9,15 @@ class RpeOpsTest extends UnitSpec {
   implicit val doubleEquality = TolerantNumerics.tolerantDoubleEquality(0.01)
 
   it should "calculate 1RM" in {
-    RpeOps.toRpe(1, 1.0) shouldEqual Rpe10
-    RpeOps.toPct(1, Rpe10) shouldEqual 1.0
+    RpeOps.toRpe(1, 1.0) shouldEqual 10.rpe
+    RpeOps.toPct(1, 10.rpe) shouldEqual 1.0
   }
 
   it should "calculate 4RM" in {
     RpeOps.toRpe(4, 1.0) shouldEqual RpeVal(10)
     RpeOps.toRpe(4, .95) shouldEqual RpeVal(10)
     RpeOps.toRpe(4, .87) shouldEqual RpeVal(9.5)
-    RpeOps.toPct(4, Rpe10) shouldEqual .892
+    RpeOps.toPct(4, 10.rpe) shouldEqual .892
   }
 
 

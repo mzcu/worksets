@@ -25,13 +25,13 @@ package object worksets {
 
   sealed trait Rpe
   case object RpeUndefined extends Rpe
-  case class RpeVal(value: Double) extends Rpe
-  object Rpe6 extends RpeVal(6.0)
-  object Rpe7 extends RpeVal(7.0)
-  object Rpe8 extends RpeVal(8.0)
-  object Rpe9 extends RpeVal(9.0)
-  object Rpe10 extends RpeVal(10.0)
-
+  case class RpeVal private (value: Double) extends Rpe
+  object RpeVal {
+    def apply(value: Double): RpeVal = {
+      require(value >= 5.0 && value <= 10.0, "RPE makes sense for values between 5.0 and 10.0")
+      new RpeVal(value)
+    }
+  }
   case class Set(weight: Weight, reps: Int, rpe: Rpe) {
     def *(count: Int): List[Set] = List.fill(count)(this)
     def volume: Weight = weight * reps
@@ -113,16 +113,13 @@ package object worksets {
 
   implicit class DoubleWorksetOps(value: Double) {
     def kg: Weight = Weight((value*1000).toInt)
-    def rpe: Rpe = value match {
-      case 0d | Double.NaN => RpeUndefined
-      case d => RpeVal(d)
-    }
+    def rpe: Rpe = RpeVal(value)
   }
 
   implicit class IntWorksetOps(value: Int) {
     def kg: Weight = Weight(value*1000)
     def reps: Int = value
-    def rpe: RpeVal = RpeVal(value.toDouble)
+    def rpe: Rpe = RpeVal(value.toDouble)
   }
 
 
