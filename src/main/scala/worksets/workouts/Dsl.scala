@@ -127,8 +127,7 @@ object Dsl {
 
   }
 
-  def workout(implicit workoutHistory: WorkoutHistory): WorkoutDateBuilder =
-    (date: LocalDate) => new WorkoutBuilder(date, workoutHistory)
+  def workout(implicit workoutHistory: WorkoutHistory) = new WorkoutBuilder(LocalDate.MIN, workoutHistory)
 
   trait RepsToRpeBuilder {
     def x(reps: Int): RpeBuilder
@@ -157,10 +156,6 @@ object Dsl {
 
   trait RepsToWeightBuilder {
     def x(reps: Int): WeightBuilder
-  }
-
-  trait WorkoutDateBuilder {
-    def on(localDate: LocalDate): WorkoutBuilder
   }
 
   implicit def exerciseToWorkoutBuilder(value: WorkoutExerciseBuilder): WorkoutBuilder = {

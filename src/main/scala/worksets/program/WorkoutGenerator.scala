@@ -13,8 +13,8 @@ trait WorkoutGenerator {
   val weeklyProgram: WeeklyProgram
 
   def generate(startDate: LocalDate): WorkoutHistory = {
-    weeklyProgram.map { case (dayOfWeek, dateToWorkout) =>
-      dateToWorkout(dayOfWeek.next(startDate))
+    weeklyProgram.map { case (dayOfWeek, workout) =>
+      workout.copy(date = dayOfWeek.next(startDate))
     }
   }
 
