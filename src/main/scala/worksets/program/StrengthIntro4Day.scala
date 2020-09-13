@@ -7,7 +7,7 @@ import worksets.support.IntPercentOps
 import worksets.workouts.Dsl._
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
-class StrengthIntro4Day(implicit private val workoutHistory: WorkoutHistory) extends WorkoutGenerator {
+object StrengthIntro4Day extends WorkoutGenerator {
 
   private val squatDay: Workout = (
       workout

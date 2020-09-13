@@ -3,9 +3,8 @@ package worksets.cli
 import java.time.{Instant, LocalDate}
 
 import fansi._
-import worksets.WorkoutHistory
+import worksets.Config
 import worksets.calendar.YearWeekFormatter
-import worksets.program._
 import worksets.report.{Browser, FilePublisher}
 import worksets.repository.ObjectStore
 import worksets.support.{ListMonoid, TextBuffer}
@@ -16,16 +15,11 @@ import scala.io.StdIn
  * Created by on 03-01-20.
  */
 @SuppressWarnings(Array("org.wartremover.warts.All"))
-object ProgramNextWeek {
+object ProgramNextWeek extends Config {
   def run(): Unit = {
 
-    implicit val workoutHistory: WorkoutHistory = ObjectStore.load()
-
-    // Set desired program here
-    val currentProgram: WorkoutGenerator = new Hypertrophy4Day
-
     val startDate = LocalDate.now()
-    val week = currentProgram.generate(startDate).toList
+    val week = workoutGenerator.generate(startDate).toList
     val blockWeekNumber = week.head.date.format(YearWeekFormatter)
     val weeklyVolume = week.map(_.volume).combineAll
     val weeklyIntensity = {
@@ -38,7 +32,7 @@ object ProgramNextWeek {
 
     val textBuffer = new TextBuffer
 
-    textBuffer.appendRow(s"${Bold.On(blockWeekNumber)} ${Underlined.On(currentProgram.programName)}")
+    textBuffer.appendRow(s"${Bold.On(blockWeekNumber)} ${Underlined.On(workoutGenerator.programName)}")
     textBuffer.appendRow("")
     textBuffer.appendRow(s"Weekly total volume: ${Bold.On(weeklyVolume.show)}")
     textBuffer.appendRow(s"Average workout intensity: ${Bold.On(weeklyIntensity)}")
@@ -64,7 +58,7 @@ object ProgramNextWeek {
 
     if (StdIn.readLine("Save? y/[n]").toLowerCase.contains('y')) {
       val publishedTo = FilePublisher.publish(blockWeekNumber + "_" + Instant.now(), workoutPlan)
-      ObjectStore.store(workoutHistory ++ week)
+      ObjectStore.store(workoutGenerator.workoutHistory ++ week)
       println("Saved program for following week. Opening report...")
       Thread.sleep(1500)
       Browser.browse(publishedTo.toUri)

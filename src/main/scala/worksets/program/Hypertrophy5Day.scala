@@ -10,8 +10,7 @@ import worksets.workouts.Dsl._
  * Created by on 22-07-20.
  */
 @SuppressWarnings(Array("org.wartremover.warts.All"))
-class Hypertrophy5Day(implicit private val workoutHistory: WorkoutHistory) extends WorkoutGenerator {
-
+object Hypertrophy5Day extends WorkoutGenerator {
 
   private val squatDay: Workout = (
       workout
