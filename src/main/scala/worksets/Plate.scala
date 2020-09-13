@@ -17,7 +17,16 @@ object Plate {
   val `20.0`: Plate = Plate(20.kg)
 
   def weightToPlates(weight: Weight)(implicit availablePlates: SortedSet[Plate]): List[Plate] = {
-    var remainingWeight = weight.grams
+    @inline
+    def roundHalfUp(value: Int, rem: Int) = {
+      val half = rem/2
+      value % rem match {
+        case v if v < half => value - v
+        case v if v >= half => value + v
+        case _ => value
+      }
+    }
+    var remainingWeight = roundHalfUp(weight.grams, 500)
     val plates = availablePlates.toList.reverse
     val result = ListBuffer[Plate]()
     plates.foreach { case p@Plate(Weight(plateWeight)) =>
