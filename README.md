@@ -28,7 +28,7 @@ from planned ones
 
 #### Repeat
 
-After finishing workout week and weekly review, [generate a new weekly workout program](#Generate weekly workout)
+After finishing workout week and weekly review, [generate a new weekly workout program](#generate-weekly-workout)
 
 ## Other
 
