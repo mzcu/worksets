@@ -14,12 +14,13 @@ import scala.io.StdIn
 /**
  * Created by on 03-01-20.
  */
-@SuppressWarnings(Array("org.wartremover.warts.All"))
+@SuppressWarnings(Array("org.wartremover.warts.StringPlusAny"))
 object ProgramNextWeek extends Config {
   def run(): Unit = {
 
     val startDate = LocalDate.now()
     val week = workoutGenerator.generate(startDate).toList
+    @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
     val blockWeekNumber = week.head.date.format(YearWeekFormatter)
     val weeklyVolume = week.map(_.volume).combineAll
     val weeklyIntensity = {
@@ -58,7 +59,7 @@ object ProgramNextWeek extends Config {
 
     if (StdIn.readLine("Save? y/[n]").toLowerCase.contains('y')) {
       val publishedTo = FilePublisher.publish(blockWeekNumber + "_" + Instant.now(), workoutPlan)
-      ObjectStore.store(workoutGenerator.workoutHistory ++ week)
+      val _ = ObjectStore.store(workoutGenerator.workoutHistory ++ week)
       println("Saved program for following week. Opening report...")
       Thread.sleep(1500)
       Browser.browse(publishedTo.toUri)

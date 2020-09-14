@@ -20,10 +20,11 @@ object Dsl {
     def exercise(exercise: ExerciseWithMods): WorkoutExerciseBuilder = new WorkoutExerciseBuilder(this, exercise)
   }
 
-  @SuppressWarnings(Array("org.wartremover.warts.All"))
+  @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements", "org.wartremover.warts.TraversableOps"))
   class WorkoutExerciseBuilder(private[workouts] val parent: WorkoutBuilder, private[workouts] val exercise: ExerciseWithMods) {
     self =>
 
+    @SuppressWarnings(Array("org.wartremover.warts.Var"))
     private var closed: Boolean = false
     private[workouts] val workSets = ListBuffer[WorkSet]()
 

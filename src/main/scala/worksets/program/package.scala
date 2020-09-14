@@ -1,7 +1,5 @@
 package worksets
 
-import java.time.LocalDate
-
 import worksets.calendar.Day
 
 /**

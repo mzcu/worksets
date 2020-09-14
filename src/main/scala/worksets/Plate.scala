@@ -1,13 +1,11 @@
 package worksets
 
 import scala.collection.SortedSet
-import scala.collection.mutable.ListBuffer
 
 case class Plate(weight: Weight) extends Ordered[Plate] {
   override def compare(that: Plate): Int = this.weight.grams.compareTo(that.weight.grams)
 }
 
-@SuppressWarnings(Array("org.wartremover.warts.All"))
 object Plate {
 
   val `1.25`: Plate = Plate(1.25.kg)
@@ -17,28 +15,33 @@ object Plate {
   val `20.0`: Plate = Plate(20.kg)
 
   def weightToPlates(weight: Weight)(implicit availablePlates: SortedSet[Plate]): List[Plate] = {
-    @inline
-    def roundHalfUp(value: Int, rem: Int) = {
-      val half = rem/2
-      value % rem match {
-        case v if v < half => value - v
-        case v if v >= half => value + v
-        case _ => value
-      }
+    val remainingWeight = roundHalfUp(weight.grams, 500)
+    val plates = availablePlates.toList.foldRight(WeightToPlatesState(List.empty, remainingWeight)) {
+      case (plate, state) if plate.weight.grams*2 <= state.remainingWeightGrams =>
+        val requiredPlatePairs = state.remainingWeightGrams / (plate.weight.grams*2)
+        val usedPlates = List.fill(requiredPlatePairs)(plate)
+        WeightToPlatesState(
+          state.usedPlates ++ usedPlates,
+          state.remainingWeightGrams - requiredPlatePairs*2*plate.weight.grams
+        )
+      case (_, state) => state
     }
-    var remainingWeight = roundHalfUp(weight.grams, 500)
-    val plates = availablePlates.toList.reverse
-    val result = ListBuffer[Plate]()
-    plates.foreach { case p@Plate(Weight(plateWeight)) =>
-      while (plateWeight*2 <= remainingWeight) {
-        remainingWeight -= plateWeight*2
-        result += p
-      }
-    }
-    result.toList
+    plates.usedPlates
   }
 
   def roundToAvailablePlates(weight: Weight)(implicit availablePlates: SortedSet[Plate]): Weight =
     Weight(weightToPlates(weight).map(_.weight.grams).sum * 2)
+
+  private case class WeightToPlatesState(usedPlates: List[Plate], remainingWeightGrams: Int)
+
+  @inline
+  private def roundHalfUp(value: Int, step: Int) = {
+    val half = step/2
+    value % step match {
+      case v if v < half => value - v
+      case v if v >= half => value + v
+      case _ => value
+    }
+  }
 
 }

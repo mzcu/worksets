@@ -4,7 +4,7 @@ package worksets
  * Created by on 03-01-20.
  */
 object Main {
-  @SuppressWarnings(Array("org.wartremover.warts.All"))
+  @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   def main(args: Array[String]): Unit = {
     ammonite.Main(welcomeBanner = Some("Worksets 0.1"), predefCode =
       """

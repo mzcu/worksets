@@ -22,7 +22,7 @@ object Show {
 
 
 
-@SuppressWarnings(Array("org.wartremover.warts.All"))
+@SuppressWarnings(Array("org.wartremover.warts.StringPlusAny"))
 object ConsoleView {
 
   import Show._

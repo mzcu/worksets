@@ -6,7 +6,6 @@ import worksets.calendar._
 import worksets.support.IntPercentOps
 import worksets.workouts.Dsl._
 
-@SuppressWarnings(Array("org.wartremover.warts.All"))
 object StrengthIntro4Day extends WorkoutGenerator {
 
   private val squatDay: Workout = (
@@ -22,7 +21,7 @@ object StrengthIntro4Day extends WorkoutGenerator {
         exercise PendlayRowStandard workset 90.0.kg x 4 at 8.rpe worksetRelative 90.pct x 4 sets 3
       )
 
-  val weeklyProgram: WeeklyProgram = List(
+  val weeklyProgram: WeeklyProgram = List[(Day, Workout)](
     Monday -> squatDay,
     Tuesday -> deadLiftDay,
     Thursday -> squatDay,

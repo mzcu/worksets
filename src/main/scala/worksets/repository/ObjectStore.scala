@@ -11,14 +11,14 @@ import worksets.workouts.WorkoutRepository
 import scala.collection.immutable.Seq
 import scala.jdk.OptionConverters._
 
-// Not designed with thread safety in mind
-@SuppressWarnings(Array("org.wartremover.warts.All"))
+// Single-user data store
 object ObjectStore extends WorkoutRepository {
 
   import io.circe._, io.circe.generic.auto._, io.circe.syntax._
 
   private val dbVersion = 0.1
-  private val dataDirLocation = sys.props.get("user.home").get + s"/.worksets/$dbVersion"
+  @SuppressWarnings(Array("org.wartremover.warts.OptionPartial"))
+  private val dataDirLocation = sys.props.get("user.home").get + s"/.worksets/${dbVersion.toString}"
   private val dataDir: Path = Files.createDirectories(Paths.get(dataDirLocation))
   private val dbFilePrefix = "workouts-db-"
   private val dbFileExt = ".json"
@@ -34,10 +34,11 @@ object ObjectStore extends WorkoutRepository {
   }
 
   override def store(workouts: WorkoutHistory): Int = {
-    val nextVersion = currentVersion.incrementAndGet();
+    val nextVersion = currentVersion.incrementAndGet()
+    @SuppressWarnings(Array("org.wartremover.warts.Any"))
     val dbFile = Files.createFile(dataDir.resolve(f"$dbFilePrefix$nextVersion%06d$dbFileExt"))
     val dbObject = ObjectStore(dbVersion, workouts)
-    Files.write(dbFile, dbObject.asJson.toString().getBytes())
+    val _ = Files.write(dbFile, dbObject.asJson.toString().getBytes())
     nextVersion
   }
 
@@ -49,7 +50,7 @@ object ObjectStore extends WorkoutRepository {
 
   def main(args: Array[String]): Unit = {
     println(load())
-    store(Seq(Workout(LocalDate.now(), List())))
+    val _ = store(Seq(Workout(LocalDate.now(), List())))
     println(load())
   }
 }

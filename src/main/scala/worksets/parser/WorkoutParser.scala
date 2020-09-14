@@ -4,7 +4,7 @@ import worksets.{DoubleWorksetOps, IntWorksetOps, WeightIsAQuantity}
 
 import scala.util.parsing.combinator.RegexParsers
 
-@SuppressWarnings(Array("org.wartremover.warts.All"))
+@SuppressWarnings(Array("org.wartremover.warts.Product", "org.wartremover.warts.Serializable"))
 object WorkoutParser extends RegexParsers {
 
   def int: Parser[Int] =

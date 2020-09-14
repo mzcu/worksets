@@ -11,7 +11,6 @@ import scala.math.Ordering.Implicits.infixOrderingOps
 /**
  * Created by on 03-01-20.
  */
-@SuppressWarnings(Array("org.wartremover.warts.All"))
 object ShowReport {
 
   import ConsoleView._
@@ -22,8 +21,9 @@ object ShowReport {
     allWorkouts.filter(_.sets.exists(_.completed))
   }
 
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   def lastWorkouts(n: Int = 5): Unit = {
-    println(s"Last $n workout(s)")
+    println(s"Last ${n.toString} workout(s)")
     completedWorkouts.map(_.show).foreach(Console.println)
   }
 

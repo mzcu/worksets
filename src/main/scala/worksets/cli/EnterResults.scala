@@ -8,7 +8,6 @@ import scala.io.StdIn
 /**
  * Created by on 03-01-20.
  */
-@SuppressWarnings(Array("org.wartremover.warts.All"))
 object EnterResults {
 
   import ConsoleView._
@@ -27,12 +26,13 @@ object EnterResults {
 
       val firstOpenWorkoutSheet = allWorkouts(firstOpenWorkoutIndex)
 
-      println(s"\n\nWorkout sheet for ${firstOpenWorkoutSheet.date}")
+      println(s"\n\nWorkout sheet for ${firstOpenWorkoutSheet.date.toString}")
 
       val completedSets = firstOpenWorkoutSheet.sets.map { exercise =>
         println(exercise.exercise.show)
         print("Target: ")
         println(exercise.target.show)
+        @SuppressWarnings(Array("org.wartremover.warts.Null"))
         val actual = workoutInput.reader.readLine("> ", null, s"${exercise.target.show}")
         val updatedSet = workoutInput.parser.parseLine(actual) match {
           case SetLiteral(set) => set
@@ -49,7 +49,7 @@ object EnterResults {
 
       println(completed.show)
       if (StdIn.readLine("Save? y/[n]").toLowerCase.contains('y')) {
-        ObjectStore.store(updatedWorkout)
+        val _ = ObjectStore.store(updatedWorkout)
         println("Worksheet closed")
       } else {
         println("Aborted")
