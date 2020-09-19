@@ -6,7 +6,7 @@ import worksets.{DoubleWorksetOps, IntWorksetOps, RpeVal, UnitSpec, Weight}
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class RpeOpsTest extends UnitSpec {
 
-  implicit val doubleEquality = TolerantNumerics.tolerantDoubleEquality(0.01)
+  implicit val doubleEquality: org.scalactic.Equality[Double] = TolerantNumerics.tolerantDoubleEquality(0.01)
 
   it should "calculate 1RM" in {
     RpeOps.toRpe(1, 1.0) shouldEqual 10.rpe

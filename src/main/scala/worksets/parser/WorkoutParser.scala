@@ -1,6 +1,6 @@
 package worksets.parser
 
-import worksets.{DoubleWorksetOps, IntWorksetOps, WeightIsAQuantity}
+import worksets.{DoubleWorksetOps, IntWorksetOps, WeightIsAQuantity, RpeOps}
 
 import scala.util.parsing.combinator.RegexParsers
 

@@ -3,6 +3,7 @@ package worksets
 /**
  * Created by on 03-01-20.
  */
+/*
 object Main {
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   def main(args: Array[String]): Unit = {
@@ -19,3 +20,4 @@ object Main {
       .run()
   }
 }
+*/

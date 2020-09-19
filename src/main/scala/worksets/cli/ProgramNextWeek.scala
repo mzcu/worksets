@@ -3,11 +3,11 @@ package worksets.cli
 import java.time.{Instant, LocalDate}
 
 import fansi._
-import worksets.Config
+import worksets.{Config, Weight, support}
 import worksets.calendar.YearWeekFormatter
 import worksets.report.{Browser, FilePublisher}
 import worksets.repository.ObjectStore
-import worksets.support.{ListMonoid, TextBuffer}
+import worksets.support.{TextBuffer}
 
 import scala.io.StdIn
 
@@ -22,7 +22,7 @@ object ProgramNextWeek extends Config {
     val week = workoutGenerator.generate(startDate).toList
     @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
     val blockWeekNumber = week.head.date.format(YearWeekFormatter)
-    val weeklyVolume = week.map(_.volume).combineAll
+    val weeklyVolume: Weight = week.map(_.volume).reduceLeft((l,r) => Weight(l.grams + r.grams))
     val weeklyIntensity = {
       val weeklyIntensity = week.map(_.intensity)
       (weeklyIntensity.sum / weeklyIntensity.size).formatted("%.2f")

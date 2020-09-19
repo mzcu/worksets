@@ -3,19 +3,30 @@ name := "worksets"
 
 version := "0.1"
 
-scalaVersion := "2.13.3"
+scalaVersion := "0.27.0-RC1"
 
-wartremoverErrors ++= Warts.unsafe.filterNot(_ == Wart.DefaultArguments)
-
-libraryDependencies += "com.lihaoyi" % "ammonite" % "2.2.0" cross CrossVersion.full
-libraryDependencies += "com.lihaoyi" %% "scalatags" % "0.9.1"
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2" % "test"
+libraryDependencies += "com.lihaoyi" %% "fansi" % "0.2.7"
+libraryDependencies += "com.lihaoyi" %% "scalatags" % "0.9.1"
 
 val circeVersion = "0.13.0"
 
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
-  "io.circe" %% "circe-generic",
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
+
+libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
+
+libraryDependencies ++= Seq(
+  "org.scalatest" %% "scalatest" % "3.2.2" % "test",
+  ("org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0" % "test")
+    .intransitive()
+    .withDottyCompat(scalaVersion.value),
+  ("org.scalacheck" %% "scalacheck" % "1.14.3" % "test").withDottyCompat(scalaVersion.value)
+)
+
+libraryDependencies += "org.jline" % "jline-reader" % "3.16.0"
+
+
+scalacOptions ++= { if (isDotty.value) Seq("-source:3.0-migration", "-nowarn", "-rewrite") else Nil }

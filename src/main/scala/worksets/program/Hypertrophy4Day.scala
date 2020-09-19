@@ -2,7 +2,7 @@ package worksets.program
 
 import worksets.Predef._
 import worksets._
-import worksets.calendar._
+import worksets.calendar.{Day, Monday, Tuesday, Thursday, Friday}
 import worksets.workouts.Dsl._
 
 /**

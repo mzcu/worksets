@@ -31,6 +31,8 @@ object Dsl {
     def close(): Unit = closed = true
 
     def isOpen: Boolean = !closed
+    
+    def exercise(exerciseWithMods: ExerciseWithMods): WorkoutExerciseBuilder = exerciseToWorkoutBuilder(self).exercise(exerciseWithMods)
 
     // Static builders using values provided as arguments)
 

@@ -8,7 +8,7 @@ import scala.collection.SortedSet
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class PlateTest extends UnitSpec {
 
-  implicit val availablePlates = SortedSet(Plate.`1.25`, Plate.`2.5`, Plate.`5.0`, Plate.`10.0`, Plate.`20.0`)
+  implicit val availablePlates: SortedSet[Plate] = SortedSet(Plate.`1.25`, Plate.`2.5`, Plate.`5.0`, Plate.`10.0`, Plate.`20.0`)
 
   it should "select correct plates 1" in {
     Plate.weightToPlates(77.5.kg) shouldEqual availablePlates.toList.reverse

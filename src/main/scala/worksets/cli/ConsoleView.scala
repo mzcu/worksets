@@ -43,7 +43,7 @@ object ConsoleView {
 
   implicit val WorkSetShow: Show[WorkSet] = (workset: WorkSet) => s"${workset.actual.show}"
 
-  implicit val ExerciseWithModsShow: Show[ExerciseWithMods] = { it: ExerciseWithMods =>
+  implicit val ExerciseWithModsShow: Show[ExerciseWithMods] = { (it: ExerciseWithMods) =>
     @tailrec
     def showMods(base: String, mods: worksets.Mods): String = {
       (base, mods) match {
