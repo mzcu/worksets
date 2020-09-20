@@ -1,1 +1,1 @@
-sbt "runMain worksets.Main"
+sbt "runMain worksets.cli.EnterResults"

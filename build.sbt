@@ -9,12 +9,7 @@ libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % 
 libraryDependencies += "com.lihaoyi" %% "fansi" % "0.2.7"
 libraryDependencies += "com.lihaoyi" %% "scalatags" % "0.9.1"
 
-val circeVersion = "0.13.0"
-
-libraryDependencies ++= Seq(
-  "io.circe" %% "circe-core",
-  "io.circe" %% "circe-parser"
-).map(_ % circeVersion)
+val circeVersion = "0.14.0-M1"
 
 libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
 
@@ -25,6 +20,12 @@ libraryDependencies ++= Seq(
     .withDottyCompat(scalaVersion.value),
   ("org.scalacheck" %% "scalacheck" % "1.14.3" % "test").withDottyCompat(scalaVersion.value)
 )
+
+
+libraryDependencies ++= Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion).map(_.withDottyCompat(scalaVersion.value))
 
 libraryDependencies += "org.jline" % "jline-reader" % "3.16.0"
 

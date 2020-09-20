@@ -58,4 +58,8 @@ object EnterResults {
     }
   }
 
+  def main(args: Array[String]): Unit = {
+    interact()
+  }
+
 }
