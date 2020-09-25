@@ -9,7 +9,7 @@ import worksets.workouts.Dsl._
  * Created by on 22-07-20.
  */
 object Hypertrophy4Day extends WorkoutGenerator {
-  val weeklyProgram: WeeklyProgram = {
+  val weeklyProgram: WeeklyProgram =
     val squatDay: Workout = (
       workout
         exercise CompetitionSquat worksetByE1RM 8.rpe x 8 repeat 3
@@ -28,5 +28,4 @@ object Hypertrophy4Day extends WorkoutGenerator {
       Thursday -> squatDay,
       Friday -> deadLiftDay
     )
-  }
 }

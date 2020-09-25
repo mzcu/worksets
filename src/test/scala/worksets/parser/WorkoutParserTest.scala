@@ -6,7 +6,7 @@ import worksets.{DoubleWorksetOps, IntWorksetOps, UnitSpec}
  * Created by on 08-08-20.
  */
 @SuppressWarnings(Array("org.wartremover.warts.All"))
-class WorkoutParserTest extends UnitSpec {
+class WorkoutParserTest extends UnitSpec:
 
   import WorkoutParser.parseLine
 
@@ -48,4 +48,3 @@ class WorkoutParserTest extends UnitSpec {
     }
   }
 
-}

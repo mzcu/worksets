@@ -3,7 +3,7 @@ package worksets
 /**
  * Created by on 04-01-20.
  */
-object Predef {
+object Predef:
 
   // Exercises
   val Bench: Exercise = Exercise("Bench Press")
@@ -41,4 +41,3 @@ object Predef {
 
   // Pullups
   val BodyWeightPullups: ExerciseWithMods = ExerciseWithMods(PullUps, NoBar, NoMods)
-}

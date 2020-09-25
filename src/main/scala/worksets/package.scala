@@ -3,56 +3,47 @@ import java.time.LocalDate
 import worksets.support.{ListMonoid, Monoid, Quantity}
 
 
-package object worksets {
+package object worksets:
 
   case class Weight(grams: Int) extends AnyVal
 
-  object Weight {
+  object Weight:
     val zero: Weight = Weight(0)
     def apply(kilos: Double): Weight = Weight((kilos * 1000).toInt)
-  }
 
-  implicit class WeightIsAQuantity(val value: Weight) extends Quantity[Weight] {
+  implicit class WeightIsAQuantity(val value: Weight) extends Quantity[Weight]:
     override def +(that: Weight): Weight = Weight(this.value.grams + that.grams)
     override def *(that: Double): Weight = Weight((this.value.grams * that).toInt)
     override def compare(that: Weight): Int = value.grams.compareTo(that.grams)
-  }
 
-  implicit object WeightIsAMonoid extends Monoid[Weight] {
+  implicit object WeightIsAMonoid extends Monoid[Weight]:
     override def empty: Weight = Weight.zero
     override def combine(first: Weight, second: Weight): Weight = first + second
-  }
 
   sealed trait Rpe
   case object RpeUndefined extends Rpe
   case class RpeVal private (value: Double) extends Rpe
-  object RpeVal {
-    def apply(value: Double): RpeVal = {
+  object RpeVal:
+    def apply(value: Double): RpeVal =
       require(value >= 5.0 && value <= 10.0, "RPE makes sense for values between 5.0 and 10.0")
       new RpeVal(value)
-    }
-  }
-  case class Set(weight: Weight, reps: Int, rpe: Rpe) {
+  case class Set(weight: Weight, reps: Int, rpe: Rpe):
     def *(count: Int): List[Set] = List.fill(count)(this)
     def volume: Weight = weight * reps
-  }
-  object Set {
+  object Set:
     val empty: Set = Set(0.kg, 0, RpeUndefined)
-  }
-  case class WorkSet(exercise: ExerciseWithMods, target: Set, actual: Set, ord: Int = Int.MinValue, completed: Boolean = false) {
+  case class WorkSet(exercise: ExerciseWithMods, target: Set, actual: Set, ord: Int = Int.MinValue, completed: Boolean = false):
     def volume: Weight = actual.volume
     def intensity: Double = actual.rpe.asDouble
-  }
 
   case class Exercise(name: String)
   case class ExerciseWithMods(exercise: Exercise, barType: BarType, mods: Mods)
 
-  sealed trait Mods {
+  sealed trait Mods:
     val tempo: Option[TempoMod] = None
     val stance: Option[StanceMod] = None
     val grip: Option[GripMod] = None
     val kit: Option[KitMod] = None
-  }
 
   case object NoMods extends Mods
 
@@ -61,10 +52,9 @@ package object worksets {
                       override val grip: Option[GripMod] = None,
                       override val kit: Option[KitMod] = None) extends Mods
 
-  case class Workout(date: LocalDate, sets: List[WorkSet]) {
+  case class Workout(date: LocalDate, sets: List[WorkSet]):
     def volume: Weight = sets.map(_.volume).combineAll
     def intensity: Double = sets.map(_.intensity).sum / sets.size
-  }
 
   type WorkoutHistory = Seq[Workout]
 
@@ -104,23 +94,18 @@ package object worksets {
 
   case object VeryWideGrip extends GripMod
 
-  implicit class RpeOps(val rpe: Rpe) {
-    def asDouble: Double = rpe match {
+  implicit class RpeOps(val rpe: Rpe):
+    def asDouble: Double = rpe match
       case RpeVal(v) => v
       case _ => 0d
-    }
-  }
 
-  implicit class DoubleWorksetOps(value: Double) {
+  implicit class DoubleWorksetOps(value: Double):
     def kg: Weight = Weight((value*1000).toInt)
     def rpe: Rpe = RpeVal(value)
-  }
 
-  implicit class IntWorksetOps(value: Int) {
+  implicit class IntWorksetOps(value: Int):
     def kg: Weight = Weight(value*1000)
     def reps: Int = value
     def rpe: Rpe = RpeVal(value.toDouble)
-  }
 
 
-}

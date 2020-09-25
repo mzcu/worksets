@@ -6,7 +6,7 @@ import scala.collection.SortedSet
  * Created by on 05-01-20.
  */
 @SuppressWarnings(Array("org.wartremover.warts.All"))
-class PlateTest extends UnitSpec {
+class PlateTest extends UnitSpec:
 
   implicit val availablePlates: SortedSet[Plate] = SortedSet(Plate.`1.25`, Plate.`2.5`, Plate.`5.0`, Plate.`10.0`, Plate.`20.0`)
 
@@ -20,4 +20,3 @@ class PlateTest extends UnitSpec {
     Plate.roundToAvailablePlates(81.9.kg) shouldEqual 80.kg
   }
 
-}

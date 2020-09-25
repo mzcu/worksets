@@ -15,18 +15,17 @@ import scala.io.StdIn
  * Created by on 03-01-20.
  */
 @SuppressWarnings(Array("org.wartremover.warts.StringPlusAny"))
-object ProgramNextWeek extends Config {
-  def run(): Unit = {
+object ProgramNextWeek extends Config:
+  def run(): Unit =
 
     val startDate = LocalDate.now()
     val week = workoutGenerator.generate(startDate).toList
     @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
     val blockWeekNumber = week.head.date.format(YearWeekFormatter)
     val weeklyVolume: Weight = week.map(_.volume).reduceLeft((l,r) => Weight(l.grams + r.grams))
-    val weeklyIntensity = {
+    val weeklyIntensity =
       val weeklyIntensity = week.map(_.intensity)
       (weeklyIntensity.sum / weeklyIntensity.size).formatted("%.2f")
-    }
 
     import ConsoleView._
     import Show._
@@ -57,14 +56,11 @@ object ProgramNextWeek extends Config {
     val workoutPlan = textBuffer.format
     println(workoutPlan)
 
-    if (StdIn.readLine("Save? y/[n]").toLowerCase.contains('y')) {
+    if StdIn.readLine("Save? y/[n]").toLowerCase.contains('y') then
       val publishedTo = FilePublisher.publish(blockWeekNumber + "_" + Instant.now(), workoutPlan)
       val _ = ObjectStore.store(workoutGenerator.workoutHistory ++ week)
       println("Saved program for following week. Opening report...")
       Thread.sleep(1500)
       Browser.browse(publishedTo.toUri)
-    } else {
+    else
       println("Back to the drawing board...")
-    }
-  }
-}

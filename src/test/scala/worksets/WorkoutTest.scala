@@ -7,7 +7,7 @@ import worksets.workouts.Dsl.workout
 /**
  * Created by on 05-08-20.
  */
-class WorkoutTest extends UnitSpec {
+class WorkoutTest extends UnitSpec:
 
   implicit private val history: Seq[Workout] = Seq.empty
   val underTest: Workout = (workout
@@ -26,4 +26,3 @@ class WorkoutTest extends UnitSpec {
     actualIntensity shouldBe (7.5 +- .01)
   }
 
-}

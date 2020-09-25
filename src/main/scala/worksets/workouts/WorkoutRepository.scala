@@ -7,10 +7,8 @@ import worksets.WorkoutHistory
  */
 trait WorkoutRepository extends CanReadWorkouts with CanUpdateWorkouts
 
-trait CanUpdateWorkouts {
+trait CanUpdateWorkouts:
   def store(workouts: WorkoutHistory): Int
-}
 
-trait CanReadWorkouts {
+trait CanReadWorkouts:
   def load(): WorkoutHistory
-}

@@ -5,6 +5,5 @@ import worksets.program.WorkoutGenerator
 /**
  * Created by on 13-09-20.
  */
-trait Config {
+trait Config:
   val workoutGenerator: WorkoutGenerator = program.Hypertrophy4Day
-}

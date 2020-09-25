@@ -11,23 +11,21 @@ import scala.math.Ordering.Implicits.infixOrderingOps
 /**
  * Created by on 03-01-20.
  */
-object ShowReport {
+object ShowReport:
 
   import ConsoleView._
   import Show._
 
-  private def completedWorkouts: WorkoutHistory = {
+  private def completedWorkouts: WorkoutHistory =
     val allWorkouts = ObjectStore.load()
     allWorkouts.filter(_.sets.exists(_.completed))
-  }
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  def lastWorkouts(n: Int = 5): Unit = {
+  def lastWorkouts(n: Int = 5): Unit =
     println(s"Last ${n.toString} workout(s)")
     completedWorkouts.map(_.show).foreach(Console.println)
-  }
 
-  def volumeProgression(workouts: Int = 10): Unit = {
+  def volumeProgression(workouts: Int = 10): Unit =
 
     val textBuffer = new TextBuffer
     textBuffer.colMode()
@@ -46,9 +44,8 @@ object ShowReport {
 
     println(textBuffer.format)
 
-  }
 
-  def e1rm(workouts: Int = 10): Unit = {
+  def e1rm(workouts: Int = 10): Unit =
 
     val textBuffer = new TextBuffer
     textBuffer.colMode()
@@ -66,11 +63,8 @@ object ShowReport {
     e1rmPerWeek.foreach(textBuffer.appendColumn)
 
     println(textBuffer.format)
-  }
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit =
     e1rm()
     volumeProgression()
-  }
 
-}

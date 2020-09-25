@@ -16,7 +16,7 @@ import scala.collection.immutable.Seq
 import scala.jdk.OptionConverters._
 
 // Single-user data store
-object ObjectStore extends WorkoutRepository {
+object ObjectStore extends WorkoutRepository:
 
   import io.circe._, io.circe.syntax._, io.circe.Decoder.decodeLocalDate
   import CirceCodecs._
@@ -30,22 +30,20 @@ object ObjectStore extends WorkoutRepository {
   private val currentVersion: AtomicInteger = new AtomicInteger
   private val emptyStore = ObjectStore(dbVersion, Seq.empty)
 
-  override def load(): WorkoutHistory = {
+  override def load(): WorkoutHistory =
     lastRevision().fold(Seq.empty[worksets.Workout]) { path =>
       val loaded = jawn.parseFile(path.toFile).getOrElse(Json.Null).as[ObjectStore].getOrElse(emptyStore).workouts
       currentVersion.set(path.getFileName.getFileName.toString.split(dbFilePrefix).reverse.headOption.getOrElse("0").replace(dbFileExt, "").toInt)
       loaded
     }
-  }
 
-  override def store(workouts: WorkoutHistory): Int = {
+  override def store(workouts: WorkoutHistory): Int =
     val nextVersion = currentVersion.incrementAndGet()
     @SuppressWarnings(Array("org.wartremover.warts.Any"))
     val dbFile = Files.createFile(dataDir.resolve(f"$dbFilePrefix$nextVersion%06d$dbFileExt"))
     val dbObject = ObjectStore(dbVersion, workouts)
     val _ = Files.write(dbFile, dbObject.asJson.toString().getBytes())
     nextVersion
-  }
 
   private def lastRevision(): Option[Path] =
     Files.list(dataDir)
@@ -53,12 +51,10 @@ object ObjectStore extends WorkoutRepository {
       .sorted(Comparator.reverseOrder()).findFirst().toScala
 
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit =
     println(load())
     val _ = store(Seq(Workout(LocalDate.now(), List())))
     println(load())
-  }
-}
 
 private[repository] case class ObjectStore(version: Double, workouts: Seq[Workout])
 
@@ -70,9 +66,9 @@ object CirceCodecs {
     case worksets.Belt => JsonObject("Belt" -> JsonObject.empty.asJson).asJson
   }
   implicit val decodeKitMod: Decoder[KitMod] = (c: HCursor) => {
-    for {
+    for
       _ <- c.downField("Belt").as[Unit]
-    } yield Belt
+    yield Belt
   }
 
 
@@ -80,9 +76,9 @@ object CirceCodecs {
     case worksets.FeetUp => JsonObject("FeetUp" -> JsonObject.empty.asJson).asJson
   }
   implicit val decodeStanceMod: Decoder[StanceMod] = (c: HCursor) => {
-    for {
+    for
       _ <- c.downField("FeetUp").as[Unit]
-    } yield FeetUp
+    yield FeetUp
   }
 
   implicit val encodeGripMod: Encoder[GripMod] = Encoder.instance {
@@ -93,18 +89,18 @@ object CirceCodecs {
   }
 
   implicit val decodeGripMod: Decoder[GripMod] = (c: HCursor) => {
-    val case1 = for {
+    val case1 = for
       _ <- c.downField("VeryCloseGrip").as[Unit]
-    } yield VeryCloseGrip
-    val case2 = for {
+    yield VeryCloseGrip
+    val case2 = for
       _ <- c.downField("CloseGrip").as[Unit]
-    } yield CloseGrip
-    val case3 = for {
+    yield CloseGrip
+    val case3 = for
       _ <- c.downField("WideGrip").as[Unit]
-    } yield WideGrip
-    val case4 = for {
+    yield WideGrip
+    val case4 = for
       _ <- c.downField("VeryWideGrip").as[Unit]
-    } yield VeryWideGrip
+    yield VeryWideGrip
     case1.orElse(case2).orElse(case3).orElse(case4)
   }
 
@@ -116,20 +112,20 @@ object CirceCodecs {
       JsonObject("eccentric" -> eccentric.asJson, "isometric" -> isometric.asJson, "concentric" -> concentric.asJson).asJson).asJson
   }
   implicit val decodeTempoMod: Decoder[TempoMod] = (c: HCursor) => {
-    val case1 = for {
+    val case1 = for
       _ <- c.downField("Tempo").as[Unit]
-    } yield Tempo
-    val case2 = for {
+    yield Tempo
+    val case2 = for
       _ <- c.downField("TouchAndGo").as[Unit]
-    } yield TouchAndGo
-    val case3 = for {
+    yield TouchAndGo
+    val case3 = for
       ct <- c.downField("Pause").downField("ct").as[Int]
-    } yield Pause(ct)
-    val case4 = for {
+    yield Pause(ct)
+    val case4 = for
       ecc <- c.downField("CustomTempoMod").downField("eccentric").as[Int]
       iso <- c.downField("CustomTempoMod").downField("isometric").as[Int]
       con <- c.downField("CustomTempoMod").downField("concentric").as[Int]
-    } yield CustomTempoMod(ecc, iso, con)
+    yield CustomTempoMod(ecc, iso, con)
     case1.orElse(case2).orElse(case3).orElse(case4)
   }
 
@@ -139,12 +135,12 @@ object CirceCodecs {
   }
 
   implicit val decodeMods: Decoder[Mods] = (c: HCursor) => {
-    val case1 = for {
+    val case1 = for
       _ <- c.downField("NoMods").as[Unit]
-    } yield NoMods
-    val case2 = for {
+    yield NoMods
+    val case2 = for
       value <- c.downField("WithMods").as[WithMods]
-    } yield value
+    yield value
     case1.orElse(case2)
   }
 
@@ -154,15 +150,15 @@ object CirceCodecs {
     case worksets.NoBar => JsonObject("NoBar" -> JsonObject.empty.asJson).asJson
   }
   implicit val decodeBarType: Decoder[BarType] = (c: HCursor) => {
-    val case1 = for {
+    val case1 = for
       _ <- c.downField("Barbell").as[Unit]
-    } yield Barbell
-    val case2 = for {
+    yield Barbell
+    val case2 = for
       _ <- c.downField("TrapBar").as[Unit]
-    } yield TrapBar
-    val case3 = for {
+    yield TrapBar
+    val case3 = for
       _ <- c.downField("NoBar").as[Unit]
-    } yield NoBar
+    yield NoBar
     case1.orElse(case2).orElse(case3)
   }
 
@@ -181,12 +177,12 @@ object CirceCodecs {
   }
 
   implicit val decodeRpe: Decoder[Rpe] = (c: HCursor) => {
-    val rpeVal = for {
+    val rpeVal = for
       value <- c.downField("RpeVal").downField("value").as[Double]
-    } yield RpeVal(value)
-    val rpeUndefined = for {
+    yield RpeVal(value)
+    val rpeUndefined = for
       _ <- c.downField("RpeUndefined").as[Unit]
-    } yield RpeUndefined
+    yield RpeUndefined
     rpeVal.orElse(rpeUndefined)
   }
 

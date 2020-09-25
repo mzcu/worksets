@@ -5,7 +5,7 @@ import worksets.UnitSpec
 /**
  * Created by on 02-08-20.
  */
-class TextBufferTest extends UnitSpec {
+class TextBufferTest extends UnitSpec:
 
   private val colSeparator = " "*10 + "\t"
 
@@ -66,4 +66,3 @@ class TextBufferTest extends UnitSpec {
 
   }
 
-}

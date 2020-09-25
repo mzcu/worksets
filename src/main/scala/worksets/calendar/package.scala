@@ -7,7 +7,7 @@ import java.time.{DayOfWeek, LocalDate}
 /**
  * Created by on 26-07-20.
  */
-package object calendar {
+package object calendar:
 
   val YearWeekFormatter: DateTimeFormatter = new DateTimeFormatterBuilder()
     .parseCaseInsensitive.appendValue(IsoFields.WEEK_BASED_YEAR, 4, 10, SignStyle.EXCEEDS_PAD)
@@ -15,17 +15,14 @@ package object calendar {
     .appendValue(IsoFields.WEEK_OF_WEEK_BASED_YEAR, 2)
     .toFormatter
 
-  sealed class Day {
+  sealed class Day:
 
-    def next(afterDate: LocalDate): LocalDate = {
+    def next(afterDate: LocalDate): LocalDate =
       val dayOfWeek = toJavaDayOfWeek
       afterDate `with` TemporalAdjusters.nextOrSame(dayOfWeek)
-    }
 
-    private def toJavaDayOfWeek: DayOfWeek = {
+    private def toJavaDayOfWeek: DayOfWeek =
       DayOfWeek.valueOf(this.toString.toUpperCase())
-    }
-  }
 
   case object Monday extends Day
 
@@ -42,4 +39,3 @@ package object calendar {
   case object Sunday extends Day
 
 
-}

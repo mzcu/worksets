@@ -8,21 +8,21 @@ import scala.io.StdIn
 /**
  * Created by on 03-01-20.
  */
-object EnterResults {
+object EnterResults:
 
   import ConsoleView._
   import Show._
 
-  def interact(): Unit = {
+  def interact(): Unit =
 
 
     val workoutInput = WorkoutInput
     val allWorkouts = ObjectStore.load()
     val firstOpenWorkoutIndex = allWorkouts.indexWhere(_.sets.exists(!_.completed))
 
-    if (firstOpenWorkoutIndex < 0) {
+    if firstOpenWorkoutIndex < 0 then
       println("No open workouts, exiting...")
-    } else {
+    else
 
       val firstOpenWorkoutSheet = allWorkouts(firstOpenWorkoutIndex)
 
@@ -34,13 +34,12 @@ object EnterResults {
         println(exercise.target.show)
         @SuppressWarnings(Array("org.wartremover.warts.Null"))
         val actual = workoutInput.reader.readLine("> ", null, s"${exercise.target.show}")
-        val updatedSet = workoutInput.parser.parseLine(actual) match {
+        val updatedSet = workoutInput.parser.parseLine(actual) match
           case SetLiteral(set) => set
           case WorksetMod(_, mods) => mods.foldLeft(exercise.actual)((s, mod) => mod.modify(s))
           case WorkoutParserError(msg) =>
             Console.err.println(s"Parse error, will not change the set. Message: '$msg'")
             exercise.actual
-        }
         exercise.copy(actual = updatedSet, completed = true)
       }
 
@@ -48,18 +47,13 @@ object EnterResults {
       val updatedWorkout = allWorkouts.patch(firstOpenWorkoutIndex, Seq(completed), 1)
 
       println(completed.show)
-      if (StdIn.readLine("Save? y/[n]").toLowerCase.contains('y')) {
+      if StdIn.readLine("Save? y/[n]").toLowerCase.contains('y') then
         val _ = ObjectStore.store(updatedWorkout)
         println("Worksheet closed")
-      } else {
+      else
         println("Aborted")
-      }
 
-    }
-  }
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit =
     interact()
-  }
 
-}

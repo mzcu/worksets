@@ -4,7 +4,7 @@ import org.scalactic.TolerantNumerics
 import worksets.{DoubleWorksetOps, IntWorksetOps, RpeVal, UnitSpec, Weight}
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
-class RpeOpsTest extends UnitSpec {
+class RpeOpsTest extends UnitSpec:
 
   implicit val doubleEquality: org.scalactic.Equality[Double] = TolerantNumerics.tolerantDoubleEquality(0.01)
 
@@ -45,4 +45,3 @@ class RpeOpsTest extends UnitSpec {
     RpeOps.e1rm(Weight(105.0), 4, RpeVal(8)).grams should be (125000 +- 1000)
     RpeOps.e1rm(Weight(115.0), 1, RpeVal(6)).grams should be (133000 +- 1000)
   }
-}

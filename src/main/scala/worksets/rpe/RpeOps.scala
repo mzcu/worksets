@@ -27,20 +27,18 @@ import scala.math.BigDecimal.double2bigDecimal
  * </pre>
  */
 @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
-object RpeOps {
+object RpeOps:
 
   def toPct(reps: Int, rpe: Rpe): Double = tuchschererRpeApprox(reps, rpe)
 
-  def toRpe(reps: Int, pct: Double): Rpe = {
+  def toRpe(reps: Int, pct: Double): Rpe =
     val searchInterval = 5.0 to 10.0 by 0.5
     searchInterval.map(rpeVal => (rpeVal, toPct(reps, rpeVal.toDouble.rpe)))
       .minBy(t => Math.abs(t._2 - pct))._1.toDouble.rpe
-  }
 
-  def e1rm(weight: Weight, reps: Int, rpe: Rpe): Weight = {
+  def e1rm(weight: Weight, reps: Int, rpe: Rpe): Weight =
     val pct = toPct(reps, rpe)
     Weight((weight.grams / pct).toInt)
-  }
 
   // Sorted by degree starting from 0
   private val tuchschererPolyCoefficients =
@@ -54,12 +52,10 @@ object RpeOps {
    */
   private def evaluatePolyAt(coefficients: List[Double], x: Double): Double = coefficients.reduceRight(_ + x * _)
 
-  private def tuchschererRpeApprox(reps: Int, rpe: Rpe): Double = rpe match {
+  private def tuchschererRpeApprox(reps: Int, rpe: Rpe): Double = rpe match
       case RpeVal(rpeVal) =>
         require(reps > 0 && reps <= 15, "RPE-percentage conversion only makes sense for reps between 1 and 15")
         val x = reps.toDouble + 10.0 - rpeVal
         BigDecimal(evaluatePolyAt(tuchschererPolyCoefficients, x)).setScale(3, BigDecimal.RoundingMode.HALF_UP).toDouble
       case _ => 0.0
-    }
 
-}

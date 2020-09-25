@@ -11,17 +11,16 @@ import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
 
 
-object Dsl {
+object Dsl:
 
-  class WorkoutBuilder(val date: LocalDate, val workoutHistory: WorkoutHistory) {
+  class WorkoutBuilder(val date: LocalDate, val workoutHistory: WorkoutHistory):
     private[workouts] val setCounter = new AtomicInteger()
     private[workouts] val workSets = ListBuffer[WorkSet]()
 
     def exercise(exercise: ExerciseWithMods): WorkoutExerciseBuilder = new WorkoutExerciseBuilder(this, exercise)
-  }
 
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements", "org.wartremover.warts.TraversableOps"))
-  class WorkoutExerciseBuilder(private[workouts] val parent: WorkoutBuilder, private[workouts] val exercise: ExerciseWithMods) {
+  class WorkoutExerciseBuilder(private[workouts] val parent: WorkoutBuilder, private[workouts] val exercise: ExerciseWithMods):
     self =>
 
     @SuppressWarnings(Array("org.wartremover.warts.Var"))
@@ -71,7 +70,7 @@ object Dsl {
         val currentPct = RpeOps.toPct(reps, RpeVal(rpeInt))
         val percentDiff = {
           val pdiff = currentPct - startingPct
-          if (pdiff < 0) 1 - pdiff else 1 + pdiff
+          if pdiff < 0 then 1 - pdiff else 1 + pdiff
         }
         val adjustedWeight = Weight((weight.grams * percentDiff).toInt)
         val target = WorksetOps.createSet(adjustedWeight, reps, RpeVal(rpeInt))
@@ -81,7 +80,7 @@ object Dsl {
     }
 
 
-    def loadDrop(howMany: Int): this.type = {
+    def loadDrop(howMany: Int): this.type =
       require(isOpen)
       val number = parent.setCounter.incrementAndGet()
       require(workSets.nonEmpty)
@@ -89,19 +88,17 @@ object Dsl {
       val target = WorksetOps.roundSet(reference.target.copy(weight = Weight((reference.target.weight.grams * .95).toInt)))
       workSets ++= List.fill(howMany)(reference.copy(target = target, actual = target, ord = number))
       this
-    }
 
 
     // Dynamic builders using workout history to calculate targets
 
-    def weeklyProgressiveOverload(multiplier: Double): this.type = {
+    def weeklyProgressiveOverload(multiplier: Double): this.type =
       require(isOpen)
       val number = parent.setCounter.incrementAndGet()
       val lastTopSet = parent.workoutHistory.reverse.take(10).map(_.sets.filter(_.exercise == this.exercise).map(_.actual).maxBy(_.weight.grams)).head
       val target = WorksetOps.createSet(Weight((lastTopSet.weight.grams * multiplier).toInt), lastTopSet.reps, lastTopSet.rpe)
       workSets += WorkSet(exercise, target, target, number)
       this
-    }
 
     def worksetByE1RM(percent: Percent): RepsBuilder = (reps: Int) => {
       require(isOpen)
@@ -128,48 +125,37 @@ object Dsl {
       self
     }
 
-  }
 
   def workout(implicit workoutHistory: WorkoutHistory) = new WorkoutBuilder(LocalDate.MIN, workoutHistory)
 
-  trait RepsToRpeBuilder {
+  trait RepsToRpeBuilder:
     def x(reps: Int): RpeBuilder
-  }
 
 
-  trait RepsToSetsBuilder {
+  trait RepsToSetsBuilder:
     def x(reps: Int): SetRepetitionBuilder
-  }
 
-  trait SetRepetitionBuilder {
+  trait SetRepetitionBuilder:
     def sets(howMany: Int): WorkoutExerciseBuilder
-  }
 
-  trait RpeBuilder {
+  trait RpeBuilder:
     def at(rpe: Rpe): WorkoutExerciseBuilder
-  }
 
-  trait RepsBuilder {
+  trait RepsBuilder:
     def x(reps: Int): WorkoutExerciseBuilder
-  }
 
-  trait WeightBuilder {
+  trait WeightBuilder:
     def weight(weight: Weight): WorkoutExerciseBuilder
-  }
 
-  trait RepsToWeightBuilder {
+  trait RepsToWeightBuilder:
     def x(reps: Int): WeightBuilder
-  }
 
-  implicit def exerciseToWorkoutBuilder(value: WorkoutExerciseBuilder): WorkoutBuilder = {
+  implicit def exerciseToWorkoutBuilder(value: WorkoutExerciseBuilder): WorkoutBuilder =
     require(value.isOpen)
     val _ = value.parent.workSets ++= value.workSets
     value.parent
-  }
 
-  implicit def workoutExerciseBuilderToWorkout(value: WorkoutExerciseBuilder): Workout = {
-    val workoutBuilder = if (value.isOpen) exerciseToWorkoutBuilder(value) else value.parent
+  implicit def workoutExerciseBuilderToWorkout(value: WorkoutExerciseBuilder): Workout =
+    val workoutBuilder = if value.isOpen then exerciseToWorkoutBuilder(value) else value.parent
     Workout(workoutBuilder.date, workoutBuilder.workSets.toList)
-  }
-}
 

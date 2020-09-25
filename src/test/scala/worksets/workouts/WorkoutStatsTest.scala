@@ -12,7 +12,7 @@ import scala.language.postfixOps
  * Created by on 31-07-20.
  */
 @SuppressWarnings(Array("org.wartremover.warts.All"))
-class WorkoutStatsTest extends UnitSpec {
+class WorkoutStatsTest extends UnitSpec:
 
   implicit private val history: Seq[Workout] = Seq.empty
   val testWorkout: Workout = (workout
@@ -43,4 +43,3 @@ class WorkoutStatsTest extends UnitSpec {
   }
 
 
-}

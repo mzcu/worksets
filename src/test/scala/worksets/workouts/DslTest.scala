@@ -8,12 +8,11 @@ import worksets.Predef._
  * Created by on 13-09-20.
  */
 @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
-class DslTest extends UnitSpec {
+class DslTest extends UnitSpec:
 
-  private def buildWorkout: Workout = {
+  private def buildWorkout: Workout =
     implicit val history: WorkoutHistory = Seq.empty
     workout exercise CompetitionBench workset 80.kg x 8 at 7.5.rpe repeat 3
-  }
 
   "worksetByE1RM" should "build based on workout history" in {
       implicit val history: WorkoutHistory = Seq(buildWorkout)
@@ -23,4 +22,3 @@ class DslTest extends UnitSpec {
       targetSet shouldEqual expectedSet
   }
 
-}

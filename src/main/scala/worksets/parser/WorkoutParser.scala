@@ -5,7 +5,7 @@ import worksets.{DoubleWorksetOps, IntWorksetOps, WeightIsAQuantity, RpeOps}
 import scala.util.parsing.combinator.RegexParsers
 
 @SuppressWarnings(Array("org.wartremover.warts.Product", "org.wartremover.warts.Serializable"))
-object WorkoutParser extends RegexParsers {
+object WorkoutParser extends RegexParsers:
 
   def int: Parser[Int] =
     """(\d+)""".r ^^ {
@@ -26,10 +26,9 @@ object WorkoutParser extends RegexParsers {
   def skipMod: Parser[SkipMod] = "-" ^^ (_ => SkipMod.value)
 
   def qualifier: Parser[ModifierScope] = "~" ~ "(exe|set)".r ^^ { case _ ~ scope =>
-    scope match {
+    scope match
       case "exe" => ExerciseScope
       case "set" => SetScope
-    }
   }
 
   def workset: Parser[SetLiteral] = (double <~ "kg".?) ~ ("x" ~> int) ~ ("@" ~> double) ^^ { case w ~ reps ~ intensity =>
@@ -45,33 +44,25 @@ object WorkoutParser extends RegexParsers {
     WorksetMod(scope, ski ::: wei ::: rep ::: rpe)
   }
 
-  def parseLine(input: String): WorkoutParserResult = parse(workset | worksetMod, input) match {
+  def parseLine(input: String): WorkoutParserResult = parse(workset | worksetMod, input) match
     case Success(p: WorkoutParserResult, _) => p
     case NoSuccess(err, _) => WorkoutParserError(err)
     case _ => WorkoutParserError("unknown")
-  }
-
-}
 
 
-sealed trait SetModifier {
+
+sealed trait SetModifier:
   def modify(set: worksets.Set): worksets.Set
-}
-case class RpeMod(value: Double) extends SetModifier {
+case class RpeMod(value: Double) extends SetModifier:
   override def modify(set: worksets.Set): worksets.Set = set.copy(rpe = (set.rpe.asDouble + value).rpe)
-}
-case class WeightMod(value: Double) extends SetModifier {
+case class WeightMod(value: Double) extends SetModifier:
   override def modify(set: worksets.Set): worksets.Set = set.copy(weight = set.weight + value.kg)
-}
-case class RepsMod(value: Int) extends SetModifier {
+case class RepsMod(value: Int) extends SetModifier:
   override def modify(set: worksets.Set): worksets.Set = set.copy(reps = set.reps + value)
-}
-class SkipMod extends SetModifier {
+class SkipMod extends SetModifier:
   override def modify(set: worksets.Set): worksets.Set = worksets.Set.empty
-}
-object SkipMod {
+object SkipMod:
   val value = new SkipMod
-}
 
 sealed trait ModifierScope
 case object ExerciseScope extends ModifierScope

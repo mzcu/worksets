@@ -30,4 +30,4 @@ libraryDependencies ++= Seq(
 libraryDependencies += "org.jline" % "jline-reader" % "3.16.0"
 
 
-scalacOptions ++= { if (isDotty.value) Seq("-source:3.0-migration", "-nowarn", "-rewrite") else Nil }
+scalacOptions ++= Seq("-language:implicitConversions", "-source:3.0")
