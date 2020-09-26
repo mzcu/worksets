@@ -13,8 +13,7 @@ object EnterResults:
   import ConsoleView._
   import Show._
 
-  def interact(): Unit =
-
+  def main(args: Array[String]): Unit =
 
     val workoutInput = WorkoutInput
     val allWorkouts = ObjectStore.load()
@@ -25,14 +24,11 @@ object EnterResults:
     else
 
       val firstOpenWorkoutSheet = allWorkouts(firstOpenWorkoutIndex)
-
       println(s"\n\nWorkout sheet for ${firstOpenWorkoutSheet.date.toString}")
-
       val completedSets = firstOpenWorkoutSheet.sets.map { exercise =>
         println(exercise.exercise.show)
         print("Target: ")
         println(exercise.target.show)
-        @SuppressWarnings(Array("org.wartremover.warts.Null"))
         val actual = workoutInput.reader.readLine("> ", null, s"${exercise.target.show}")
         val updatedSet = workoutInput.parser.parseLine(actual) match
           case SetLiteral(set) => set
@@ -54,6 +50,4 @@ object EnterResults:
         println("Aborted")
 
 
-  def main(args: Array[String]): Unit =
-    interact()
 

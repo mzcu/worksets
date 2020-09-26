@@ -31,3 +31,9 @@ libraryDependencies += "org.jline" % "jline-reader" % "3.16.0"
 
 
 scalacOptions ++= Seq("-language:implicitConversions", "-source:3.0")
+
+val worksetsCli = "worksets.cli"
+
+TaskKey[Unit]("report") := (runMain in Compile).toTask(s" $worksetsCli.ShowReport").value
+TaskKey[Unit]("programNextWeek") := (runMain in Compile).toTask(s" $worksetsCli.ProgramNextWeek").value
+TaskKey[Unit]("enterResults") := (runMain in Compile).toTask(s" $worksetsCli.EnterResults").value

@@ -16,8 +16,7 @@ import scala.io.StdIn
  */
 @SuppressWarnings(Array("org.wartremover.warts.StringPlusAny"))
 object ProgramNextWeek extends Config:
-  def run(): Unit =
-
+  def main(args: Array[String]): Unit =
     val startDate = LocalDate.now()
     val week = workoutGenerator.generate(startDate).toList
     @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
