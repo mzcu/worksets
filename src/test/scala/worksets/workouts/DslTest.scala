@@ -22,3 +22,10 @@ class DslTest extends UnitSpec:
       targetSet shouldEqual expectedSet
   }
 
+  "<weight> x AddOne at <rpe> builder" should "add a single rep to previous workout" in {
+    implicit val history: WorkoutHistory = Seq(buildWorkout)
+    val generatedWorkout: Workout = workout exercise CompetitionBench workset 80.kg x DynamicReps.AddOne at 7.5.rpe repeat 3
+    val expectedSet = history.head.sets.head.target
+    val targetSet = generatedWorkout.sets.head.target
+    targetSet.reps shouldEqual expectedSet.reps + 1
+  }

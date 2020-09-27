@@ -39,11 +39,17 @@ object Dsl:
       require(isOpen)
       private val number = parent.setCounter.incrementAndGet()
 
-      def x(reps: Int): RpeBuilder = (rpe: Rpe) => {
+      def x(reps: Int): RpeBuilder = (rpe: Rpe) =>
         val target = Set(weight, reps, rpe)
         workSets += WorkSet(exercise, target, target, number)
         self
-      }
+      
+      def x(repsSpec: DynamicReps): RpeBuilder = 
+        val currentReps =  self.workoutHistory.takeRight(5)
+          .flatMap(_.sets.filter(_.exercise == self.exercise))
+          .map(_.actual.reps).max
+        x(currentReps + 1)
+      
     }
 
     def repeat(times: Int): WorkoutExerciseBuilder =
@@ -130,6 +136,7 @@ object Dsl:
 
   trait RepsToRpeBuilder:
     def x(reps: Int): RpeBuilder
+    def x(repsSpec: DynamicReps): RpeBuilder
 
 
   trait RepsToSetsBuilder:
@@ -149,6 +156,9 @@ object Dsl:
 
   trait RepsToWeightBuilder:
     def x(reps: Int): WeightBuilder
+  
+  enum DynamicReps:
+    case AddOne
 
   implicit def exerciseToWorkoutBuilder(value: WorkoutExerciseBuilder): WorkoutBuilder =
     require(value.isOpen)
