@@ -3,7 +3,7 @@ package worksets.report
 import java.nio.file.{Files, Path, Paths}
 
 import fansi.Str
-import worksets.lib.Fansi.FansiStrOps
+import worksets.lib.Fansi._
 
 /**
  * Created by on 02-08-20.

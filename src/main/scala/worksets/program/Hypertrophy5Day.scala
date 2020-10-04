@@ -1,9 +1,10 @@
 package worksets.program
 
 import worksets._
+import worksets.Ops._
 import worksets.Predef._
 import worksets.calendar._
-import worksets.support.IntPercentOps
+import worksets.support.pct
 import worksets.workouts.Dsl._
 
 /**

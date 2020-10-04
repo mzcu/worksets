@@ -9,10 +9,9 @@ import scala.collection.mutable
 /**
  * Based on https://gist.github.com/lihaoyi/f0545f714d105f30afd5f4191997e3ea
  */
-@SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.NonUnitStatements"))
 object Fansi:
 
-  implicit class FansiStrOps(value: fansi.Str):
+  extension (value: fansi.Str):
 
     /**
      * Currently supports only bold and underline

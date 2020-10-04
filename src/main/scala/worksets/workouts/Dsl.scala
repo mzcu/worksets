@@ -3,12 +3,11 @@ package worksets.workouts
 import java.time.LocalDate
 import java.util.concurrent.atomic.AtomicInteger
 
-import worksets._
+import worksets.{_, given _}
 import worksets.rpe.RpeOps
-import worksets.support.{IntPercentOps, Percent}
+import worksets.support.{Percent, pct}
 
 import scala.collection.mutable.ListBuffer
-import scala.language.implicitConversions
 
 
 object Dsl:
@@ -132,7 +131,7 @@ object Dsl:
     }
 
 
-  def workout(implicit workoutHistory: WorkoutHistory) = new WorkoutBuilder(LocalDate.MIN, workoutHistory)
+  def workout(using workoutHistory: WorkoutHistory) = new WorkoutBuilder(LocalDate.MIN, workoutHistory)
 
   trait RepsToRpeBuilder:
     def x(reps: Int): RpeBuilder
@@ -160,12 +159,12 @@ object Dsl:
   enum DynamicReps:
     case AddOne
 
-  implicit def exerciseToWorkoutBuilder(value: WorkoutExerciseBuilder): WorkoutBuilder =
+  given exerciseToWorkoutBuilder as Conversion[WorkoutExerciseBuilder, WorkoutBuilder] = value =>
     require(value.isOpen)
     val _ = value.parent.workSets ++= value.workSets
     value.parent
 
-  implicit def workoutExerciseBuilderToWorkout(value: WorkoutExerciseBuilder): Workout =
+  given workoutExerciseBuilderToWorkout as Conversion[WorkoutExerciseBuilder, Workout] = value =>
     val workoutBuilder = if value.isOpen then exerciseToWorkoutBuilder(value) else value.parent
     Workout(workoutBuilder.date, workoutBuilder.workSets.toList)
 

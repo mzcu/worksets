@@ -1,6 +1,7 @@
 package worksets.rpe
 
-import worksets.{DoubleWorksetOps, Rpe, RpeVal, Weight}
+import worksets._
+import worksets.Ops._
 
 import scala.math.BigDecimal.double2bigDecimal
 
@@ -26,7 +27,6 @@ import scala.math.BigDecimal.double2bigDecimal
  *
  * </pre>
  */
-@SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
 object RpeOps:
 
   def toPct(reps: Int, rpe: Rpe): Double = tuchschererRpeApprox(reps, rpe)

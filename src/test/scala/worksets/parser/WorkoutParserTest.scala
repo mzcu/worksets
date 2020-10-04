@@ -1,11 +1,11 @@
 package worksets.parser
 
-import worksets.{DoubleWorksetOps, IntWorksetOps, UnitSpec}
+import worksets.{UnitSpec}
+import worksets.Ops._
 
 /**
  * Created by on 08-08-20.
  */
-@SuppressWarnings(Array("org.wartremover.warts.All"))
 class WorkoutParserTest extends UnitSpec:
 
   import WorkoutParser.parseLine

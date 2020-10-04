@@ -1,10 +1,10 @@
 package worksets.parser
 
-import worksets.{DoubleWorksetOps, IntWorksetOps, WeightIsAQuantity, RpeOps}
+import worksets.weightQuantity
+import worksets.Ops._
 
 import scala.util.parsing.combinator.RegexParsers
 
-@SuppressWarnings(Array("org.wartremover.warts.Product", "org.wartremover.warts.Serializable"))
 object WorkoutParser extends RegexParsers:
 
   def int: Parser[Int] =

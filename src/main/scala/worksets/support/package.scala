@@ -1,30 +1,26 @@
 package worksets
 
-package object support {
+package object support:
 
-  trait Quantity[T] extends Ordered[T]:
-    def *(multiplier: Double): T
-    def +(summand: T): T
+  trait Ord[T]:
+    def compare(x: T, y: T): Int
+    extension (x: T) def < (y: T) = compare(x, y) < 0
+    extension (x: T) def > (y: T) = compare(x, y) > 0
+    extension (x: T) def max(y: T) = if x > y then x else y
+  
+  trait Quantity[T] extends Ord[T]:
+    extension (x: T) def *(multiplier: Double): T
+    extension (x: T) def +(summand: T): T
 
   trait Monoid[A]:
     def empty: A
-
-    def combine(first: A, second: A): A
-
-    def combineAll(as: Iterable[A]): A = as.iterator.foldLeft(empty)(combine)
-
-
-  implicit class ListMonoid[A](val as: List[A]) extends Monoid[List[A]]:
-    override def empty: List[A] = Nil
-    override def combine(first: List[A], second: List[A]): List[A] = first ::: second
-    def combineAll(implicit m: Monoid[A]): A = m.combineAll(as)
-
+    extension (x: A) def combine(y: A): A
+  
+  extension[A: Monoid] (xs: List[A]) def combineAll(): A =
+    xs.foldLeft(summon[Monoid[A]].empty)(_ combine _)
 
   case class Percent(value: Int) extends AnyVal:
     def asRatio: Double = value / 100.0
-    def *[T](quantity: Quantity[T]): T = quantity.*(this.asRatio)
-
-  implicit class IntPercentOps(value: Int):
-    def pct: Percent = Percent(value)
-
-}
+    def *[T: Quantity](quantity: T): T = quantity * this.asRatio
+    
+  extension (value: Int) def pct = Percent(value)

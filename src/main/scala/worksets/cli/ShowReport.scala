@@ -4,7 +4,7 @@ import worksets.calendar.YearWeekFormatter
 import worksets.repository.ObjectStore
 import worksets.support.TextBuffer
 import worksets.workouts.WorkoutStats
-import worksets.{WeightIsAQuantity, WorkoutHistory}
+import worksets.{WorkoutHistory, given _}
 
 import scala.math.Ordering.Implicits.infixOrderingOps
 
@@ -13,8 +13,7 @@ import scala.math.Ordering.Implicits.infixOrderingOps
  */
 object ShowReport:
 
-  import ConsoleView._
-  import Show._
+  import ConsoleView.{given _}
 
   private def completedWorkouts: WorkoutHistory =
     val allWorkouts = ObjectStore.load()

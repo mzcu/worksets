@@ -9,6 +9,8 @@ import worksets.report.{Browser, FilePublisher}
 import worksets.repository.ObjectStore
 import worksets.support.{TextBuffer}
 
+import worksets.cli.ConsoleView.{given _}
+
 import scala.io.StdIn
 
 /**
@@ -27,7 +29,6 @@ object ProgramNextWeek extends Config:
       (weeklyIntensity.sum / weeklyIntensity.size).formatted("%.2f")
 
     import ConsoleView._
-    import Show._
 
     val textBuffer = new TextBuffer
 

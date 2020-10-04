@@ -19,7 +19,7 @@ import scala.jdk.OptionConverters._
 object ObjectStore extends WorkoutRepository:
 
   import io.circe._, io.circe.syntax._, io.circe.Decoder.decodeLocalDate
-  import CirceCodecs._
+  import CirceCodecs.{given _}
 
   private val dbVersion = 0.1
   @SuppressWarnings(Array("org.wartremover.warts.OptionPartial"))
@@ -62,33 +62,33 @@ object CirceCodecs {
 
   import worksets._
 
-  implicit val encodeKitMod: Encoder[KitMod] = Encoder.instance {
+  given encodeKitMod as Encoder[KitMod] = Encoder.instance {
     case worksets.Belt => JsonObject("Belt" -> JsonObject.empty.asJson).asJson
   }
-  implicit val decodeKitMod: Decoder[KitMod] = (c: HCursor) => {
+  given decodeKitMod as Decoder[KitMod] = (c: HCursor) => {
     for
       _ <- c.downField("Belt").as[Unit]
     yield Belt
   }
 
 
-  implicit val encodeStanceMod: Encoder[StanceMod] = Encoder.instance {
+  given encodeStanceMod as Encoder[StanceMod] = Encoder.instance {
     case worksets.FeetUp => JsonObject("FeetUp" -> JsonObject.empty.asJson).asJson
   }
-  implicit val decodeStanceMod: Decoder[StanceMod] = (c: HCursor) => {
+  given decodeStanceMod as Decoder[StanceMod] = (c: HCursor) => {
     for
       _ <- c.downField("FeetUp").as[Unit]
     yield FeetUp
   }
 
-  implicit val encodeGripMod: Encoder[GripMod] = Encoder.instance {
+  given encodeGripMod as Encoder[GripMod] = Encoder.instance {
     case worksets.VeryCloseGrip => JsonObject("VeryCloseGrip" -> JsonObject.empty.asJson).asJson
     case worksets.CloseGrip => JsonObject("CloseGrip" -> JsonObject.empty.asJson).asJson
     case worksets.WideGrip => JsonObject("WideGrip" -> JsonObject.empty.asJson).asJson
     case worksets.VeryWideGrip => JsonObject("VeryWideGrip" -> JsonObject.empty.asJson).asJson
   }
 
-  implicit val decodeGripMod: Decoder[GripMod] = (c: HCursor) => {
+  given decodeGripMod as Decoder[GripMod] = (c: HCursor) => {
     val case1 = for
       _ <- c.downField("VeryCloseGrip").as[Unit]
     yield VeryCloseGrip
@@ -104,14 +104,14 @@ object CirceCodecs {
     case1.orElse(case2).orElse(case3).orElse(case4)
   }
 
-  implicit val encodeTempoMod: Encoder[TempoMod] = Encoder.instance {
+  given encodeTempoMod as Encoder[TempoMod] = Encoder.instance {
     case worksets.Tempo => JsonObject("Tempo" -> JsonObject.empty.asJson).asJson
     case worksets.TouchAndGo => JsonObject("TouchAndGo" -> JsonObject.empty.asJson).asJson
     case Pause(ct) => JsonObject("Pause" -> JsonObject("ct" -> ct.asJson).asJson).asJson
     case CustomTempoMod(eccentric, isometric, concentric) =>JsonObject("CustomTempoMod" ->
       JsonObject("eccentric" -> eccentric.asJson, "isometric" -> isometric.asJson, "concentric" -> concentric.asJson).asJson).asJson
   }
-  implicit val decodeTempoMod: Decoder[TempoMod] = (c: HCursor) => {
+  given decodeTempoMod as Decoder[TempoMod] = (c: HCursor) => {
     val case1 = for
       _ <- c.downField("Tempo").as[Unit]
     yield Tempo
@@ -129,12 +129,12 @@ object CirceCodecs {
     case1.orElse(case2).orElse(case3).orElse(case4)
   }
 
-  implicit val encodeMods: Encoder[Mods] = Encoder.instance {
+  given encodeMods as Encoder[Mods] = Encoder.instance {
     case worksets.NoMods => JsonObject("NoMods" -> JsonObject.empty.asJson).asJson
     case ms @ WithMods(_, _, _, _) => JsonObject("WithMods" -> ms.asJson).asJson
   }
 
-  implicit val decodeMods: Decoder[Mods] = (c: HCursor) => {
+  given decodeMods as Decoder[Mods] = (c: HCursor) => {
     val case1 = for
       _ <- c.downField("NoMods").as[Unit]
     yield NoMods
@@ -144,12 +144,12 @@ object CirceCodecs {
     case1.orElse(case2)
   }
 
-  implicit val encodeBarType: Encoder[BarType] = Encoder.instance {
+  given encodeBarType as Encoder[BarType] = Encoder.instance {
     case worksets.Barbell => JsonObject("Barbell" -> JsonObject.empty.asJson).asJson
     case worksets.TrapBar => JsonObject("TrapBar" -> JsonObject.empty.asJson).asJson
     case worksets.NoBar => JsonObject("NoBar" -> JsonObject.empty.asJson).asJson
   }
-  implicit val decodeBarType: Decoder[BarType] = (c: HCursor) => {
+  given decodeBarType as Decoder[BarType] = (c: HCursor) => {
     val case1 = for
       _ <- c.downField("Barbell").as[Unit]
     yield Barbell
@@ -162,21 +162,21 @@ object CirceCodecs {
     case1.orElse(case2).orElse(case3)
   }
 
-  implicit val encodeWithMods: Encoder[WithMods] = Encoder.forProduct4("tempo", "stance", "grip", "kit")(o => (o.tempo, o.stance, o.grip, o.kit))
-  implicit val decodeWithMods: Decoder[WithMods] = Decoder.forProduct4("tempo", "stance", "grip", "kit")(WithMods.apply)
+  given encodeWithMods as Encoder[WithMods] = Encoder.forProduct4("tempo", "stance", "grip", "kit")(o => (o.tempo, o.stance, o.grip, o.kit))
+  given decodeWithMods as Decoder[WithMods] = Decoder.forProduct4("tempo", "stance", "grip", "kit")(WithMods.apply)
 
-  implicit val encodeExercise: Encoder[Exercise] = Encoder.forProduct1("name")((_.name))
-  implicit val decodeExercise: Decoder[Exercise] = Decoder.forProduct1("name")(Exercise.apply)
+  given encodeExercise as Encoder[Exercise] = Encoder.forProduct1("name")((_.name))
+  given decodeExercise as Decoder[Exercise] = Decoder.forProduct1("name")(Exercise.apply)
 
-  implicit val encodeExerciseWithMods: Encoder[ExerciseWithMods] = Encoder.forProduct3("exercise", "barType", "mods")(o => (o.exercise, o.barType, o.mods))
-  implicit val decodeExerciseWithMods: Decoder[ExerciseWithMods] = Decoder.forProduct3("exercise", "barType", "mods")(ExerciseWithMods.apply)
+  given encodeExerciseWithMods as Encoder[ExerciseWithMods] = Encoder.forProduct3("exercise", "barType", "mods")(o => (o.exercise, o.barType, o.mods))
+  given decodeExerciseWithMods as Decoder[ExerciseWithMods] = Decoder.forProduct3("exercise", "barType", "mods")(ExerciseWithMods.apply)
   
-  implicit val encodeRpe: Encoder[Rpe] = Encoder.instance {
+  given encodeRpe as Encoder[Rpe] = Encoder.instance {
     case RpeVal(v) => JsonObject("RpeVal" -> JsonObject("value" -> Json.fromDouble(v).get).asJson).asJson
     case _ => JsonObject("RpeUndefined" -> JsonObject.empty.asJson).asJson
   }
 
-  implicit val decodeRpe: Decoder[Rpe] = (c: HCursor) => {
+  given decodeRpe as Decoder[Rpe] = (c: HCursor) => {
     val rpeVal = for
       value <- c.downField("RpeVal").downField("value").as[Double]
     yield RpeVal(value)
@@ -186,19 +186,19 @@ object CirceCodecs {
     rpeVal.orElse(rpeUndefined)
   }
 
-  implicit val encodeWeight: Encoder[Weight] = Encoder.forProduct1("grams")((_.grams))
-  implicit val decodeWeight: Decoder[Weight] = Decoder.forProduct1("grams")(Weight.apply)
+  given encodeWeight as Encoder[Weight] = Encoder.forProduct1("grams")((_.grams))
+  given decodeWeight as Decoder[Weight] = Decoder.forProduct1("grams")(Weight.apply)
 
-  implicit val encodeSet: Encoder[Set] = Encoder.forProduct3("weight", "reps", "rpe")(o => (o.weight, o.reps, o.rpe))
-  implicit val decodeSet: Decoder[Set] = Decoder.forProduct3("weight", "reps", "rpe")(Set.apply)
+  given encodeSet as Encoder[Set] = Encoder.forProduct3("weight", "reps", "rpe")(o => (o.weight, o.reps, o.rpe))
+  given decodeSet as Decoder[Set] = Decoder.forProduct3("weight", "reps", "rpe")(Set.apply)
   
-  implicit val encodeWorkSet: Encoder[WorkSet] = Encoder.forProduct5("exercise", "target", "actual", "ord", "completed")(o => (o.exercise, o.target, o.actual, o.ord, o.completed))
-  implicit val decodeWorkSet: Decoder[WorkSet] = Decoder.forProduct5("exercise", "target", "actual", "ord", "completed")(WorkSet.apply)
+  given encodeWorkSet as Encoder[WorkSet] = Encoder.forProduct5("exercise", "target", "actual", "ord", "completed")(o => (o.exercise, o.target, o.actual, o.ord, o.completed))
+  given decodeWorkSet as Decoder[WorkSet] = Decoder.forProduct5("exercise", "target", "actual", "ord", "completed")(WorkSet.apply)
   
-  implicit val encodeWorkout: Encoder[Workout] = Encoder.forProduct2("date", "sets")(o => (o.date, o.sets))
-  implicit val decodeWorkout: Decoder[Workout] = Decoder.forProduct2("date", "sets")(Workout.apply)
+  given encodeWorkout as Encoder[Workout] = Encoder.forProduct2("date", "sets")(o => (o.date, o.sets))
+  given decodeWorkout as Decoder[Workout] = Decoder.forProduct2("date", "sets")(Workout.apply)
 
-  implicit val encodeObjectStore: Encoder[ObjectStore] = Encoder.forProduct2("version", "workouts")(o => (o.version, o.workouts))
-  implicit val decodeObjectStore: Decoder[ObjectStore] = Decoder.forProduct2("version", "workouts")(ObjectStore.apply)
+  given encodeObjectStore as Encoder[ObjectStore] = Encoder.forProduct2("version", "workouts")(o => (o.version, o.workouts))
+  given decodeObjectStore as Decoder[ObjectStore] = Decoder.forProduct2("version", "workouts")(ObjectStore.apply)
 
 }

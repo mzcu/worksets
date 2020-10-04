@@ -1,6 +1,7 @@
 package worksets
 
 import scala.collection.SortedSet
+import worksets.Ops._
 
 case class Plate(weight: Weight) extends Ordered[Plate]:
   override def compare(that: Plate): Int = this.weight.grams.compareTo(that.weight.grams)
@@ -13,7 +14,7 @@ object Plate {
   val `10.0`: Plate = Plate(10.kg)
   val `20.0`: Plate = Plate(20.kg)
 
-  def weightToPlates(weight: Weight)(implicit availablePlates: SortedSet[Plate]): List[Plate] =
+  def weightToPlates(weight: Weight)(using availablePlates: SortedSet[Plate]): List[Plate] =
     val remainingWeight = roundHalfUp(weight.grams, 500)
     val plates = availablePlates.toList.foldRight(WeightToPlatesState(List.empty, remainingWeight)) {
       case (plate, state) if plate.weight.grams*2 <= state.remainingWeightGrams =>
@@ -27,7 +28,7 @@ object Plate {
     }
     plates.usedPlates
 
-  def roundToAvailablePlates(weight: Weight)(implicit availablePlates: SortedSet[Plate]): Weight =
+  def roundToAvailablePlates(weight: Weight)(using availablePlates: SortedSet[Plate]): Weight =
     Weight(weightToPlates(weight).map(_.weight.grams).sum * 2)
 
   private case class WeightToPlatesState(usedPlates: List[Plate], remainingWeightGrams: Int)

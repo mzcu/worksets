@@ -1,9 +1,15 @@
 package worksets
 
+import scala.collection.SortedSet
+
 /**
  * Created by on 04-01-20.
  */
 object Predef:
+
+
+  given availablePlates as SortedSet[Plate] =
+    SortedSet(Plate.`1.25`, Plate.`2.5`, Plate.`5.0`, Plate.`10.0`, Plate.`20.0`)
 
   // Exercises
   val Bench: Exercise = Exercise("Bench Press")

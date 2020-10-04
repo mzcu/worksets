@@ -3,7 +3,8 @@ package worksets.workouts
 import worksets.Predef.{CompetitionDeadlift, CompetitionSquat}
 import worksets.support._
 import worksets.workouts.Dsl._
-import worksets.{IntWorksetOps, UnitSpec, Workout}
+import worksets.{UnitSpec, Workout}
+import worksets.Ops._
 
 import scala.language.postfixOps
 
@@ -14,7 +15,7 @@ import scala.language.postfixOps
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class WorkoutStatsTest extends UnitSpec:
 
-  implicit private val history: Seq[Workout] = Seq.empty
+  given history as Seq[Workout] = Seq.empty
   val testWorkout: Workout = (workout
     exercise CompetitionSquat workset 100.kg x 10 at 8.rpe worksetRelative 100.pct x 10 sets 4
     exercise CompetitionDeadlift workset 110.kg x 6 at 6.rpe worksetRelative 90.pct x 6 sets 4

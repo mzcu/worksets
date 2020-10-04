@@ -4,7 +4,6 @@ import worksets.support.TextBuffer._
 
 import scala.collection.mutable.ListBuffer
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements", "org.wartremover.warts.Var"))
 class TextBuffer:
 
   private val buf: ListBuffer[ListBuffer[Char]] = ListBuffer()

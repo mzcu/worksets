@@ -10,8 +10,7 @@ import scala.io.StdIn
  */
 object EnterResults:
 
-  import ConsoleView._
-  import Show._
+  import ConsoleView.{given _}
 
   def main(args: Array[String]): Unit =
 

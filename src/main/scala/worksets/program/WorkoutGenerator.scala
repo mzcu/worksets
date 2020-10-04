@@ -11,7 +11,7 @@ import worksets.repository.ObjectStore
 
 trait WorkoutGenerator:
 
-  implicit val workoutHistory: WorkoutHistory = ObjectStore.load()
+  given workoutHistory as WorkoutHistory = ObjectStore.load()
   def generate(startDate: LocalDate): WorkoutHistory =
     weeklyProgram.map { case (dayOfWeek, workout) =>
       workout.copy(date = dayOfWeek.next(startDate))

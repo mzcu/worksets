@@ -1,12 +1,12 @@
 package worksets.rpe
 
 import org.scalactic.TolerantNumerics
-import worksets.{DoubleWorksetOps, IntWorksetOps, RpeVal, UnitSpec, Weight}
+import worksets.{RpeVal, UnitSpec, Weight}
+import worksets.Ops._
 
-@SuppressWarnings(Array("org.wartremover.warts.All"))
 class RpeOpsTest extends UnitSpec:
 
-  implicit val doubleEquality: org.scalactic.Equality[Double] = TolerantNumerics.tolerantDoubleEquality(0.01)
+  given doubleEquality as org.scalactic.Equality[Double] = TolerantNumerics.tolerantDoubleEquality(0.01)
 
   it should "calculate 1RM" in {
     RpeOps.toRpe(1, 1.0) shouldEqual 10.rpe
@@ -41,7 +41,7 @@ class RpeOpsTest extends UnitSpec:
   }
 
   it should "calculate E1RM" in {
-    RpeOps.e1rm(Weight(75.0), 10, RpeVal(7)).grams should be (115000 +- 1000)
-    RpeOps.e1rm(Weight(105.0), 4, RpeVal(8)).grams should be (125000 +- 1000)
-    RpeOps.e1rm(Weight(115.0), 1, RpeVal(6)).grams should be (133000 +- 1000)
+    RpeOps.e1rm(75.kg, 10, RpeVal(7)).grams should be (115000 +- 1000)
+    RpeOps.e1rm(105.kg, 4, RpeVal(8)).grams should be (125000 +- 1000)
+    RpeOps.e1rm(115.kg, 1, RpeVal(6)).grams should be (133000 +- 1000)
   }
