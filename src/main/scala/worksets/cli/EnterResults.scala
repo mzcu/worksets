@@ -1,6 +1,6 @@
 package worksets.cli
 
-import worksets.parser.{SetLiteral, WorkoutParserError, WorksetMod}
+import worksets.parser.{ExerciseScope, SetLiteral, SetScope, WorkoutParserError, WorksetMod, SetUnchanged}
 import worksets.repository.ObjectStore
 
 import scala.io.StdIn
@@ -24,21 +24,23 @@ object EnterResults:
 
       val firstOpenWorkoutSheet = allWorkouts(firstOpenWorkoutIndex)
       println(s"\n\nWorkout sheet for ${firstOpenWorkoutSheet.date.toString}")
-      val completedSets = firstOpenWorkoutSheet.sets.map { exercise =>
+      
+      val workoutCursor: WorkoutCursor = WorkoutCursor(firstOpenWorkoutSheet)
+      workoutCursor.foreach { exercise =>
         println(exercise.exercise.show)
         print("Target: ")
         println(exercise.target.show)
-        val actual = workoutInput.reader.readLine("> ", null, s"${exercise.target.show}")
+        val actual = workoutInput.reader.readLine("> ", null)
         val updatedSet = workoutInput.parser.parseLine(actual) match
-          case SetLiteral(set) => set
-          case WorksetMod(_, mods) => mods.foldLeft(exercise.actual)((s, mod) => mod.modify(s))
+          case SetLiteral(set) => workoutCursor.accept(set)
+          case mod @ WorksetMod(_, _) => workoutCursor.accept(mod)
+          case SetUnchanged => workoutCursor.accept(exercise.actual)
           case WorkoutParserError(msg) =>
-            Console.err.println(s"Parse error, will not change the set. Message: '$msg'")
-            exercise.actual
-        exercise.copy(actual = updatedSet, completed = true)
+            Console.err.println(s"Parse error, aborting. Message: '$msg'")
+            return
       }
 
-      val completed = firstOpenWorkoutSheet.copy(sets = completedSets)
+      val completed = workoutCursor.get
       val updatedWorkout = allWorkouts.patch(firstOpenWorkoutIndex, Seq(completed), 1)
 
       println(completed.show)
@@ -47,6 +49,51 @@ object EnterResults:
         println("Worksheet closed")
       else
         println("Aborted")
+
+
+class WorkoutCursor(workoutArg: worksets.Workout) extends Iterator[worksets.WorkSet]:
+
+  private var index = -1
+  private var workout = workoutArg
+
+  override def hasNext: Boolean = workout.sets.length > index + 1
+  override def next(): worksets.WorkSet =
+    if hasNext then
+      index += 1
+      workout.sets(index)
+    else
+      Iterator.empty.next()
+
+  def get: worksets.Workout = workout
+  
+  def accept(set: worksets.Set) =
+    val updatedSets = Seq(workout.sets(index).copy(actual = set, completed = true))
+    val updatedWorkSets = workout.sets.patch(index, updatedSets, 1)
+    workout = workout.copy(sets = updatedWorkSets)
+  
+  def accept(mod: WorksetMod) =
+    val update: List[worksets.WorkSet] = mod.scope match {
+      case ExerciseScope =>
+        val currentExercise = workout.sets(index).exercise
+        val currentExerciseSets =
+          workout.sets.slice(index, workout.sets.size).takeWhile(_.exercise == currentExercise)
+        val updatedExerciseSets = currentExerciseSets.map { currentWorkSet =>
+          val modifiedSet = applyMod(mod, currentWorkSet)
+          currentWorkSet.copy(actual = modifiedSet, completed = true)
+        }
+        updatedExerciseSets
+      case SetScope =>
+        val currentSet = workout.sets(index)
+        val updatedSet: worksets.Set = applyMod(mod, currentSet)
+        val completedSet = currentSet.copy(actual = updatedSet, completed = true)
+        List(completedSet)
+    }
+    val updatedWorkSets = workout.sets.patch(index, update, update.size)
+    index += update.size - 1
+    workout = workout.copy(sets = updatedWorkSets)
+
+  private def applyMod(mod: WorksetMod, currentSet: worksets.WorkSet) =
+    mod.mods.foldLeft(currentSet.actual)((s, mod) => mod.modify(s))
 
 
 

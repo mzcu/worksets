@@ -43,8 +43,10 @@ object WorkoutParser extends RegexParsers:
     val ski = mod._2._1._1._1.toList
     WorksetMod(scope, ski ::: wei ::: rep ::: rpe)
   }
+  
+  def unchanged: Parser[WorkoutParserResult] = """^$""".r ^^ { _ => SetUnchanged }
 
-  def parseLine(input: String): WorkoutParserResult = parse(workset | worksetMod, input) match
+  def parseLine(input: String): WorkoutParserResult = parse(workset | worksetMod | unchanged, input) match
     case Success(p: WorkoutParserResult, _) => p
     case NoSuccess(err, _) => WorkoutParserError(err)
     case _ => WorkoutParserError("unknown")
@@ -71,4 +73,5 @@ case object SetScope extends ModifierScope
 sealed trait WorkoutParserResult
 case class WorksetMod(scope: ModifierScope, mods: List[SetModifier]) extends WorkoutParserResult
 case class SetLiteral(set: worksets.Set) extends WorkoutParserResult
+object SetUnchanged extends WorkoutParserResult
 case class WorkoutParserError(msg: String) extends WorkoutParserResult
