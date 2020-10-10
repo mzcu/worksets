@@ -1,3 +1,4 @@
+import sbtassembly.AssemblyPlugin.defaultUniversalScript
 
 name := "worksets"
 
@@ -32,8 +33,8 @@ libraryDependencies += "org.jline" % "jline-reader" % "3.16.0"
 
 scalacOptions ++= Seq("-language:implicitConversions", "-source:3.0")
 
-val worksetsCli = "worksets.cli"
+mainClass in assembly := Some("worksets.Main")
+test in assembly := {}
+assemblyOption in assembly := (assemblyOption in assembly).value.copy(prependShellScript = Some(defaultUniversalScript(shebang = false)))
+assemblyJarName in assembly := s"${name.value}-${version.value}"
 
-TaskKey[Unit]("report") := (runMain in Compile).toTask(s" $worksetsCli.ShowReport").value
-TaskKey[Unit]("programNextWeek") := (runMain in Compile).toTask(s" $worksetsCli.ProgramNextWeek").value
-TaskKey[Unit]("enterResults") := (runMain in Compile).toTask(s" $worksetsCli.EnterResults").value
