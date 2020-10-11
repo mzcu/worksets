@@ -29,6 +29,7 @@ libraryDependencies ++= Seq(
 ).map(_ % circeVersion).map(_.withDottyCompat(scalaVersion.value))
 
 libraryDependencies += "org.jline" % "jline-reader" % "3.16.0"
+libraryDependencies += "com.mitchtalmadge" % "ascii-data" % "1.4.0"
 
 
 scalacOptions ++= Seq("-language:implicitConversions", "-source:3.0")

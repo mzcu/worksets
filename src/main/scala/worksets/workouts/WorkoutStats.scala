@@ -13,6 +13,12 @@ object WorkoutStats:
       val exerciseVolume = worksets.map(_.volume).combineAll()
       (exercise, exerciseVolume)
     }.toList
+  
+  def averageIntensityPerExercise(workout: Workout): Seq[(ExerciseWithMods, Double)] =
+    workout.sets.groupBy(_.exercise).map { case (exercise, worksets) =>
+      val exerciseIntensity = worksets.map(_.intensity)
+      (exercise, exerciseIntensity.sum / exerciseIntensity.length)
+    }.toList
 
   def topSetPerExercise(workout: Workout): Seq[(ExerciseWithMods, worksets.Set)] =
     workout.sets.groupMapReduce(_.exercise)(_.actual)((a, b) => if a.weight.grams > b.weight.grams then a else b).toList

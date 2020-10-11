@@ -1,5 +1,8 @@
 package worksets.cli
 
+import java.text.{DecimalFormat, DecimalFormatSymbols}
+
+import com.mitchtalmadge.asciidata.graph.ASCIIGraph
 import worksets.calendar.YearWeekFormatter
 import worksets.repository.ObjectStore
 import worksets.support.TextBuffer
@@ -28,52 +31,79 @@ object ShowReport:
       val weekString = w.date.format(YearWeekFormatter)
       WorkoutStats.volumePerExercise(w).map(v => (v._1, weekString, v._2))
     }.groupBy(_._1)
-    
-  def showWeeklyVolume() =
-    val weeklyVolume = weeklyVolumePerExercise(30).values.flatMap(_.map(v => (v._2, v._3))).groupMapReduce(_._1)(_._2)(_ + _).toList
-    weeklyVolume.sortBy(_._1).foreach((wk, weight) => println(s"$wk: ${weight.show}"))
-
-  def volumeProgression(workouts: Int = 10): Unit =
-
-    val textBuffer = new TextBuffer
-    textBuffer.colMode()
-
-    val volumePerExercise = weeklyVolumePerExercise(workouts)
-
-    val exerciseVolumePerWeek = volumePerExercise.map { case (exercise, volumeData) =>
-      val weekGroups = volumeData.groupMapReduce(_._2)(_._3)(_ + _).toList.sortBy(_._1).map(t => s"${t._1}: ${t._2.show}").mkString("\n")
-      s"${exercise.show}\n$weekGroups"
-    }.toList
-
-    exerciseVolumePerWeek.foreach(textBuffer.appendColumn)
-
-    println(textBuffer.format)
 
 
-  def e1rm(workouts: Int = 10): Unit =
-
-    val textBuffer = new TextBuffer
-    textBuffer.colMode()
-
-    val e1rmPerExercise = completedWorkouts.takeRight(workouts).flatMap { w =>
+  def weeklyIntensityPerExercise(workouts: Int = 30) =
+    completedWorkouts.takeRight(workouts).flatMap { w =>
       val weekString = w.date.format(YearWeekFormatter)
-      WorkoutStats.e1rmPerExercise(w).map(v => (v._1, weekString, v._2))
+      WorkoutStats.averageIntensityPerExercise(w).map(v => (v._1, weekString, v._2))
     }.groupBy(_._1)
+    
+  def weeklyVolume(): String =
+    chartSection("Weekly vol.") { (chartHeight, textBuffer) =>
+      val weeklyVolume = weeklyVolumePerExercise(100).values.flatMap(_.map(v => (v._2, v._3))).groupMapReduce(_._1)(_._2)(_ + _).toList.sortBy(_._1)
+      val from = weeklyVolume.head._1
+      val to = weeklyVolume.last._1
+      val chart = ASCIIGraph.fromSeries(weeklyVolume.map(_._2.grams / 1000.0).toArray).withTickFormat(new DecimalFormat("#")).withNumRows(chartHeight).plot()
+      textBuffer.appendColumn(s" $from .. $to\n$chart")
+    }
 
-    val e1rmPerWeek = e1rmPerExercise.map { case (exercise, e1rmData) =>
-      val weekGroups = e1rmData.groupMapReduce(_._2)(_._3)(_ max _).toList.sortBy(_._1).map(t => s"${t._1}: ${t._2.show}").mkString("\n")
-      s"${exercise.show}\n$weekGroups"
-    }.toList
+  def chartSection(title: String, chartHeight: Int = 5)(chartMaker: (Int, TextBuffer) => Unit): String =
+    val textBuffer = new TextBuffer
+    textBuffer.colMode()
+    val spacer = "\n".repeat(chartHeight/2)
+    textBuffer.appendColumn( s"$spacer\n${title.padTo(12, ' ')}\n$spacer")
+    chartMaker(chartHeight, textBuffer)
+    textBuffer.format
+    
+  
+  def intensity(workouts: Int = 10): String =
+   chartSection("Intensity") { (chartHeight, textBuffer) => 
+     val intensityPerExercise = weeklyIntensityPerExercise(workouts)
+     val exerciseVolumePerWeek = intensityPerExercise.map { case (exercise, volumeData) =>
+       val weekGroups = volumeData.groupMap(_._2)(_._3).view.mapValues(xs => xs.sum / xs.length)
+         .toList.sortBy(_._1).map(t => s"${t._1}: ${t._2}").mkString("\n")
+       s"${exercise.show}\n$weekGroups"
+     }.toList
+     intensityPerExercise.foreach { e =>
+       val chart = ASCIIGraph.fromSeries(e._2.map(_._3).toArray).withTickFormat(new DecimalFormat("#")).withNumRows(chartHeight).plot()
+       textBuffer.appendColumn(s"${e._1.show}\n$chart")
+     }
+   }
 
-    e1rmPerWeek.foreach(textBuffer.appendColumn)
+  def volume(workouts: Int = 10): String =
+    chartSection("Volume") { (chartHeight, textBuffer) =>
+      val volumePerExercise = weeklyVolumePerExercise(workouts)
+      val exerciseVolumePerWeek = volumePerExercise.map { case (exercise, volumeData) =>
+        val weekGroups = volumeData.groupMapReduce(_._2)(_._3)(_ + _).toList.sortBy(_._1).map(t => s"${t._1}: ${t._2.show}").mkString("\n")
+        s"${exercise.show}\n$weekGroups"
+      }.toList
+      volumePerExercise.foreach { e =>
+        val chart = ASCIIGraph.fromSeries(e._2.map(_._3.grams / 1000.0).toArray).withTickFormat(new DecimalFormat("#")).withNumRows(chartHeight).plot()
+        textBuffer.appendColumn(s"${e._1.show}\n$chart")
+      }
+    }
 
-    println(textBuffer.format)
+
+  def e1rm(workouts: Int = 10): String =
+    chartSection("E1RM") { (chartHeight, textBuffer) =>
+      val e1rmPerExercise = completedWorkouts.takeRight(workouts).flatMap { w =>
+        val weekString = w.date.format(YearWeekFormatter)
+        WorkoutStats.e1rmPerExercise(w).map(v => (v._1, weekString, v._2))
+      }.groupBy(_._1)
+      e1rmPerExercise.foreach { e =>
+        val chart = ASCIIGraph.fromSeries(e._2.map(_._3.grams / 1000.0).toArray).withTickFormat(new DecimalFormat("#")).withNumRows(chartHeight).plot()
+        textBuffer.appendColumn(s"${e._1.show}\n$chart")
+      }
+    }
+
 
   def main(args: Array[String]): Unit =
-    println("E1RM per exercise")
-    e1rm(20)
-    println("Volume per exercise")
-    volumeProgression(20)
-    println("Weekly volume")
-    showWeeklyVolume()
-
+    val workouts = 20
+    println(volume(workouts))
+    println()
+    println(intensity(workouts))
+    println()
+    println(e1rm(workouts))
+    println()
+    println(weeklyVolume())
