@@ -21,7 +21,7 @@ import worksets.Predef._
 import worksets.calendar._
 import worksets.workouts.Dsl._
 
-object Hypertrophy4Day extends WorkoutGenerator:
+object Example4DayWorkout extends WorkoutGenerator:
   val weeklyProgram: WeeklyProgram =
     val squatDay: Workout = (
       workout
@@ -63,9 +63,45 @@ Follow the program and mark the completed sets on the printed workout plan
 
 #### Log results
 
-1. Run `./worksets enterResults` for each workout day, adjusting the values which deviate
+Run `./worksets enterResults` for each workout day, adjusting the values which deviate
 from planned ones
-2. Check progress on E1RM/Volume (`./worksets report`)
+
+#### Analyze
+
+Check the trends (`./worksets report`) and modify the workout generator if needed:
+
+```text
+$ ./target/scala-0.27/worksets-0.1 report
+
+                 Deadlift /w Belt                Squat /w Belt                   Bench Press
+                     3180 ┤╭───────╮                 3800 ┤     ╭───                 2560 ┤ ╭───────
+                     2385 ┤│       ╰                 2850 ┤╭────╯                    1920 ┤╭╯
+Volume               1590 ┤│                         1900 ┤│                         1280 ┤│
+                      795 ┤│                          950 ┤│                          640 ┤│
+                        0 ┼╯                            0 ┼╯                            0 ┼╯
+
+                 Deadlift /w Belt                Squat /w Belt                   Bench Press
+                        8 ┤╭────────                    8 ┤╭────────                    8 ┤╭────────
+                        6 ┤│                            6 ┤│                            6 ┤│
+Intensity               4 ┤│                            4 ┤│                            4 ┤│
+                        2 ┤│                            2 ┤│                            2 ┤│
+                        0 ┼╯                            0 ┼╯                            0 ┼╯
+
+                 Deadlift /w Belt                Squat /w Belt                   Bench Press
+                      180 ┤  ╭╮                       129 ┤  ╭─────                   111 ┤╭───────
+                      172 ┼╮╭╯╰───╮                   128 ┤  │                        109 ┤│
+E1RM                  164 ┤╰╯     │                   127 ┤  │                        106 ┤│
+                      157 ┤       │                   127 ┤  │                        104 ┤│
+                      149 ┤       ╰                   126 ┼──╯                        102 ┼╯
+
+                  2020-W31 .. 2020-W42
+                    34420 ┤         ╭─
+                    27724 ┤    ╭─╮╭─╯
+Weekly vol.         21028 ┼╮   │ ││
+                    14331 ┤╰─╮ │ ╰╯
+                     7635 ┤  ╰─╯
+
+```
 
 #### Repeat
 
