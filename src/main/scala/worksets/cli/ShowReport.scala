@@ -33,10 +33,17 @@ object ShowReport:
     }.groupBy(_._1)
 
 
+  def weeklyDifficultyPerExercise(workouts: Int = 30) =
+    completedWorkouts.takeRight(workouts).flatMap { w =>
+      val weekString = w.date.format(YearWeekFormatter)
+      WorkoutStats.averageDifficultyPerExercise(w).map(v => (v._1, weekString, v._2))
+    }.groupBy(_._1)
+
+
   def weeklyIntensityPerExercise(workouts: Int = 30) =
     completedWorkouts.takeRight(workouts).flatMap { w =>
       val weekString = w.date.format(YearWeekFormatter)
-      WorkoutStats.averageIntensityPerExercise(w).map(v => (v._1, weekString, v._2))
+      WorkoutStats.maxIntensityPerExercise(w).map(v => (v._1, weekString, v._2 * 100))
     }.groupBy(_._1)
     
   def weeklyVolume(): String =
@@ -55,17 +62,30 @@ object ShowReport:
     textBuffer.appendColumn( s"$spacer\n${title.padTo(12, ' ')}\n$spacer")
     chartMaker(chartHeight, textBuffer)
     textBuffer.format
-    
-  
+
   def intensity(workouts: Int = 10): String =
-   chartSection("Intensity") { (chartHeight, textBuffer) => 
-     val intensityPerExercise = weeklyIntensityPerExercise(workouts)
-     val exerciseVolumePerWeek = intensityPerExercise.map { case (exercise, volumeData) =>
-       val weekGroups = volumeData.groupMap(_._2)(_._3).view.mapValues(xs => xs.sum / xs.length)
+    chartSection("Intensity") { (chartHeight, textBuffer) =>
+      val intensityPerExercise = weeklyIntensityPerExercise(workouts)
+      val exerciseVolumePerWeek = intensityPerExercise.map { case (exercise, volumeData) =>
+        val weekGroups = volumeData.groupMap(_._2)(_._3).view.mapValues(xs => xs.sum / xs.length)
+          .toList.sortBy(_._1).map(t => s"${t._1}: ${t._2}").mkString("\n")
+        s"${exercise.show}\n$weekGroups"
+      }.toList
+      intensityPerExercise.foreach { e =>
+        val chart = ASCIIGraph.fromSeries(e._2.map(_._3).toArray).withTickFormat(new DecimalFormat("#")).withNumRows(chartHeight).plot()
+        textBuffer.appendColumn(s"${e._1.show}\n$chart")
+      }
+    }
+  
+  def difficulty(workouts: Int = 10): String =
+   chartSection("Difficulty") { (chartHeight, textBuffer) => 
+     val difficultyPerExercise = weeklyDifficultyPerExercise(workouts)
+     val exerciseVolumePerWeek = difficultyPerExercise.map { case (exercise, volumeData) =>
+       val weekGroups = volumeData.groupMap(_._2)(_._3).view.mapValues { xs => xs.sum / xs.length }
          .toList.sortBy(_._1).map(t => s"${t._1}: ${t._2}").mkString("\n")
        s"${exercise.show}\n$weekGroups"
      }.toList
-     intensityPerExercise.foreach { e =>
+     difficultyPerExercise.foreach { e =>
        val chart = ASCIIGraph.fromSeries(e._2.map(_._3).toArray).withTickFormat(new DecimalFormat("#")).withNumRows(chartHeight).plot()
        textBuffer.appendColumn(s"${e._1.show}\n$chart")
      }
@@ -99,10 +119,12 @@ object ShowReport:
 
 
   def main(args: Array[String]): Unit =
-    val workouts = 20
+    val workouts = 28
     println(volume(workouts))
     println()
     println(intensity(workouts))
+    println()
+    println(difficulty(workouts))
     println()
     println(e1rm(workouts))
     println()

@@ -2,6 +2,7 @@ package worksets.workouts
 
 import worksets.{given _, _}
 import worksets.support._
+import worksets.rpe.RpeOps.toPct
 
 /**
  * Created by on 04-01-20.
@@ -14,12 +15,22 @@ object WorkoutStats:
       (exercise, exerciseVolume)
     }.toList
   
-  def averageIntensityPerExercise(workout: Workout): Seq[(ExerciseWithMods, Double)] =
+  def averageDifficultyPerExercise(workout: Workout): Seq[(ExerciseWithMods, Double)] =
     workout.sets.groupBy(_.exercise).map { case (exercise, worksets) =>
-      val exerciseIntensity = worksets.map(_.intensity)
-      (exercise, exerciseIntensity.sum / exerciseIntensity.length)
+      val exerciseDifficulty = worksets.map(_.difficulty).filter(_ > 0)
+      val averageDifficulty = if exerciseDifficulty.length > 0 then 
+        exerciseDifficulty.sum / exerciseDifficulty.length
+      else 
+        0
+      (exercise, averageDifficulty)
     }.toList
 
+  def maxIntensityPerExercise(workout: Workout): Seq[(ExerciseWithMods, Double)] =
+    workout.sets.groupBy(_.exercise).map { case (exercise, worksets) =>
+      val maxIntensity = worksets.map(_.actual).map { w => toPct(w.reps, w.rpe )}.max
+      (exercise, maxIntensity)
+    }.toList
+    
   def topSetPerExercise(workout: Workout): Seq[(ExerciseWithMods, worksets.Set)] =
     workout.sets.groupMapReduce(_.exercise)(_.actual)((a, b) => if a.weight.grams > b.weight.grams then a else b).toList
 

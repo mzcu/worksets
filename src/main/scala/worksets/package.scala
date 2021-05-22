@@ -36,7 +36,7 @@ package object worksets:
   case class WorkSet(exercise: ExerciseWithMods, target: Set, actual: Set, ord: Int = Int.MinValue, completed: Boolean = false):
     import worksets.Ops._
     def volume: Weight = actual.volume
-    def intensity: Double = actual.rpe.asDouble
+    def difficulty: Double = actual.rpe.asDouble
 
   case class Exercise(name: String)
   case class ExerciseWithMods(exercise: Exercise, barType: BarType, mods: Mods)
@@ -56,7 +56,7 @@ package object worksets:
 
   case class Workout(date: LocalDate, sets: List[WorkSet]):
     def volume: Weight = sets.map(_.volume).combineAll()
-    def intensity: Double = sets.map(_.intensity).sum / sets.size
+    def difficulty: Double = sets.map(_.difficulty).sum / sets.size
 
   type WorkoutHistory = Seq[Workout]
 

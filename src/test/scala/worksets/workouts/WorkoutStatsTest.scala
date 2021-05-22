@@ -44,3 +44,8 @@ class WorkoutStatsTest extends UnitSpec:
   }
 
 
+  it should "calculate max intensity per exercise" in {
+    val actualMaxIntensities = WorkoutStats.maxIntensityPerExercise(testWorkout)
+    actualMaxIntensities.filter(_._1 == CompetitionSquat).head._2 should be (0.68 +- 0.01)
+    actualMaxIntensities.filter(_._1 == CompetitionDeadlift).head._2 should be (0.73 +- 0.01)
+  }

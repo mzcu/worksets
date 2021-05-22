@@ -20,7 +20,7 @@ object Hypertrophy4Day extends WorkoutGenerator:
     val deadLiftDay: Workout = (
       workout
         exercise CompetitionDeadlift worksetByE1RM 8.rpe x 6 repeat 3
-        exercise PendlayRowStandard worksetByE1RM 8.rpe x 5 repeat 3
+        exercise PendlayRowStandard worksetByE1RM 8.rpe x 5 repeat 3 loadDrop 1
         exercise BodyWeightPullups workset 80.kg x DynamicReps.AddOne at 7.rpe repeat 3
       )
     List[(Day, Workout)](

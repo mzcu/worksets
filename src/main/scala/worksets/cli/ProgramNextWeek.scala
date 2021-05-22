@@ -24,8 +24,8 @@ object ProgramNextWeek extends Config:
     @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
     val blockWeekNumber = week.head.date.format(YearWeekFormatter)
     val weeklyVolume: Weight = week.map(_.volume).reduceLeft((l,r) => Weight(l.grams + r.grams))
-    val weeklyIntensity =
-      val weeklyIntensity = week.map(_.intensity)
+    val weeklyDifficulty =
+      val weeklyIntensity = week.map(_.difficulty)
       (weeklyIntensity.sum / weeklyIntensity.size).formatted("%.2f")
 
     import ConsoleView._
@@ -35,7 +35,7 @@ object ProgramNextWeek extends Config:
     textBuffer.appendRow(s"${Bold.On(blockWeekNumber)} ${Underlined.On(workoutGenerator.programName)}")
     textBuffer.appendRow("")
     textBuffer.appendRow(s"Weekly total volume: ${Bold.On(weeklyVolume.show)}")
-    textBuffer.appendRow(s"Average workout intensity: ${Bold.On(weeklyIntensity)}")
+    textBuffer.appendRow(s"Average workout difficulty: ${Bold.On(weeklyDifficulty)}")
     textBuffer.appendRow("")
     textBuffer.appendRow("")
 
@@ -46,7 +46,7 @@ object ProgramNextWeek extends Config:
         s"""
            |Date: \t${day.date.show}
            |Volume: \t${day.volume.show}
-           |Avg RPE: \t${day.intensity.formatted("%.1f")}
+           |Avg RPE: \t${day.difficulty.formatted("%.1f")}
            |
            |${day.show}
            |

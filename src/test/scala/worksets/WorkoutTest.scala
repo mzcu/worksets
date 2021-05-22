@@ -22,8 +22,8 @@ class WorkoutTest extends UnitSpec:
     actualVolume shouldBe (100*10*5 + 100*6*5).kg
   }
 
-  it should "calculate correct intensity" in {
-    val actualIntensity = underTest.intensity
+  it should "calculate correct difficulty" in {
+    val actualIntensity = underTest.difficulty
     actualIntensity shouldBe (7.5 +- .01)
   }
 
