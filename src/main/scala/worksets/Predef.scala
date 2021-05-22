@@ -8,7 +8,7 @@ import scala.collection.SortedSet
 object Predef:
 
 
-  given availablePlates as SortedSet[Plate] =
+  given availablePlates: SortedSet[Plate] =
     SortedSet(Plate.`1.25`, Plate.`2.5`, Plate.`5.0`, Plate.`10.0`, Plate.`20.0`)
 
   // Exercises

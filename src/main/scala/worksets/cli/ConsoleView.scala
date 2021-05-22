@@ -13,24 +13,24 @@ trait Show[A]:
 
 object ConsoleView {
 
-  given DateShow as Show[LocalDate] = _.format(DateTimeFormatter.ofPattern("E, dd-MM-yyyy"))
+  given DateShow: Show[LocalDate] = _.format(DateTimeFormatter.ofPattern("E, dd-MM-yyyy"))
 
-  given weightShow as Show[Weight] = it =>
+  given weightShow: Show[Weight] = it =>
     if it.grams < 1_000_000 then
       "%.1f kg".format(it.grams / 1000.0)
     else
       "%.1f t".format(it.grams / 1_000_000.0)
 
-  given settShow as Show[Set] =
+  given settShow: Show[Set] =
     case Set(_, 0, _) => "Not done"
     case it => s"${it.weight.show} x ${it.reps}" ++ (it.rpe match {
       case RpeVal(value) => " @ " + value.toString
       case _ => ""
     })
 
-  given workSetShow as Show[WorkSet] = (workset: WorkSet) => s"${workset.actual.show}"
+  given workSetShow: Show[WorkSet] = (workset: WorkSet) => s"${workset.actual.show}"
 
-  given exerciseWithModsShow as Show[ExerciseWithMods] = { (it: ExerciseWithMods) =>
+  given exerciseWithModsShow: Show[ExerciseWithMods] = { (it: ExerciseWithMods) =>
     @tailrec
     def showMods(base: String, mods: worksets.Mods): String =
       (base, mods) match
@@ -46,20 +46,20 @@ object ConsoleView {
     showMods(base, it.mods)
   }
 
-  given barTypeShow as Show[BarType] =
+  given barTypeShow: Show[BarType] =
     case Barbell => ""
     case TrapBar => "Trap Bar"
     case NoBar => "BodyWeight"
 
-  given exerciseShow as Show[Exercise] = (exercise: Exercise) => exercise.name
+  given exerciseShow: Show[Exercise] = (exercise: Exercise) => exercise.name
 
-  given tempoShow as Show[TempoMod] =
+  given tempoShow: Show[TempoMod] =
     case Tempo => "Tempo"
     case TouchAndGo => "Touch-and-go"
     case Pause(ct) => s"${ct}ct Pause"
     case CustomTempoMod(e, i, c) => s"$e$i$c Tempo"
 
-  given workoutShow as Show[Workout] =
+  given workoutShow: Show[Workout] =
     case Workout(_, sets) => sets.groupBy(_.exercise).toList.sortBy(_._2.headOption.map(_.ord).orElse(Some(0)))
       .map((t: (ExerciseWithMods, List[WorkSet])) => s"${t._1.show}\n\t" + t._2.map(_.show).mkString("\n\t")).mkString("\n")
 

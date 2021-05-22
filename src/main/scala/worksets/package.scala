@@ -10,13 +10,13 @@ package object worksets:
   object Weight:
     val zero: Weight = Weight(0)
 
-  given weightQuantity as Quantity[Weight]:
+  given weightQuantity: Quantity[Weight] with
     extension (x: Weight) def +(y: Weight) = Weight(x.grams + y.grams)
     extension (x: Weight) def *(y: Double) = Weight((x.grams * y).toInt)
     def compare(x: Weight, y: Weight) = x.grams.compareTo(y.grams)
   
 
-  given weightMonoid as Monoid[Weight]:
+  given weightMonoid: Monoid[Weight] with
     override def empty: Weight = Weight.zero
     extension (x: Weight) def combine(y: Weight) = x + y
   
@@ -98,12 +98,12 @@ package object worksets:
   
 
   trait DoubleOps:
-    extension (value: Double):
+    extension (value: Double)
       def kg: Weight = Weight((value*1000).toInt)
       def rpe: Rpe = RpeVal(value)
 
   trait IntOps:
-    extension (value: Int): 
+    extension (value: Int)
       def kg: Weight = Weight(value*1000)
       def reps: Int = value
       def rpe: Rpe = RpeVal(value.toDouble)

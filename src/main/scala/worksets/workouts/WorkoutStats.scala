@@ -1,7 +1,7 @@
 package worksets.workouts
 
-import worksets.{given _, _}
-import worksets.support._
+import worksets.{given, *}
+import worksets.support.{given, *}
 import worksets.rpe.RpeOps.toPct
 
 /**

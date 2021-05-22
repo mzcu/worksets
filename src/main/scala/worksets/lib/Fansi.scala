@@ -11,7 +11,7 @@ import scala.collection.mutable
  */
 object Fansi:
 
-  extension (value: fansi.Str):
+  extension (value: fansi.Str)
 
     /**
      * Currently supports only bold and underline

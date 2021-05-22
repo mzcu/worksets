@@ -6,7 +6,7 @@ import worksets.Ops._
 
 class RpeOpsTest extends UnitSpec:
 
-  given doubleEquality as org.scalactic.Equality[Double] = TolerantNumerics.tolerantDoubleEquality(0.01)
+  given doubleEquality: org.scalactic.Equality[Double] = TolerantNumerics.tolerantDoubleEquality(0.01)
 
   it should "calculate 1RM" in {
     RpeOps.toRpe(1, 1.0) shouldEqual 10.rpe

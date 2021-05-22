@@ -10,7 +10,7 @@ import worksets.Ops._
  */
 class WorkoutTest extends UnitSpec:
 
-  given history as Seq[Workout] = Seq.empty
+  given history: Seq[Workout] = Seq.empty
   val underTest: Workout = (workout
     exercise CompetitionSquat workset 100.kg x 10 at 8.rpe worksetRelative 100.pct x 10 sets 4
     exercise CompetitionDeadlift workset 100.kg x 6 at 7.rpe worksetRelative 100.pct x 6 sets 4

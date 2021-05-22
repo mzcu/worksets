@@ -3,7 +3,7 @@ package worksets.workouts
 import java.time.LocalDate
 import java.util.concurrent.atomic.AtomicInteger
 
-import worksets.{_, given _}
+import worksets.{given, *}
 import worksets.rpe.RpeOps
 import worksets.support.{Percent, pct}
 
@@ -159,12 +159,12 @@ object Dsl:
   enum DynamicReps:
     case AddOne
 
-  given exerciseToWorkoutBuilder as Conversion[WorkoutExerciseBuilder, WorkoutBuilder] = value =>
+  given exerciseToWorkoutBuilder: Conversion[WorkoutExerciseBuilder, WorkoutBuilder] = value =>
     require(value.isOpen)
     val _ = value.parent.workSets ++= value.workSets
     value.parent
 
-  given workoutExerciseBuilderToWorkout as Conversion[WorkoutExerciseBuilder, Workout] = value =>
+  given workoutExerciseBuilderToWorkout: Conversion[WorkoutExerciseBuilder, Workout] = value =>
     val workoutBuilder = if value.isOpen then exerciseToWorkoutBuilder(value) else value.parent
     Workout(workoutBuilder.date, workoutBuilder.workSets.toList)
 

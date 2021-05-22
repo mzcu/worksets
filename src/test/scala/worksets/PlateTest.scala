@@ -8,7 +8,7 @@ import worksets.Ops._
  */
 class PlateTest extends UnitSpec:
 
-  given availablePlates as SortedSet[Plate] = SortedSet(Plate.`1.25`, Plate.`2.5`, Plate.`5.0`, Plate.`10.0`, Plate.`20.0`)
+  given availablePlates: SortedSet[Plate] = SortedSet(Plate.`1.25`, Plate.`2.5`, Plate.`5.0`, Plate.`10.0`, Plate.`20.0`)
 
   it should "select correct plates 1" in {
     Plate.weightToPlates(77.5.kg) shouldEqual availablePlates.toList.reverse

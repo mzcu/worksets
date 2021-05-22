@@ -4,38 +4,26 @@ name := "worksets"
 
 version := "0.1"
 
-scalaVersion := "0.27.0-RC1"
+scalaVersion := "3.0.0"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
-libraryDependencies += "com.lihaoyi" %% "fansi" % "0.2.7"
-libraryDependencies += "com.lihaoyi" %% "scalatags" % "0.9.1"
+libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "2.0.0"
+libraryDependencies += "com.lihaoyi" %% "fansi" % "0.2.14" exclude("com.lihaoyi", "sourcecode_3")
+libraryDependencies += ("com.lihaoyi" % "scalatags" % "0.9.4").cross(CrossVersion.for3Use2_13)
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test"
 
-val circeVersion = "0.14.0-M1"
-
-libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
-
-libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.2.2" % "test",
-  ("org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0" % "test")
-    .intransitive()
-    .withDottyCompat(scalaVersion.value),
-  ("org.scalacheck" %% "scalacheck" % "1.14.3" % "test").withDottyCompat(scalaVersion.value)
-)
-
+val circeVersion = "0.14.0-M7"
 
 libraryDependencies ++= Seq(
-  "io.circe" %% "circe-core",
-  "io.circe" %% "circe-parser"
-).map(_ % circeVersion).map(_.withDottyCompat(scalaVersion.value))
+  "io.circe" % "circe-core",
+  "io.circe" % "circe-parser"
+).map(_ % circeVersion).map(_.cross(CrossVersion.for3Use2_13))
 
-libraryDependencies += "org.jline" % "jline-reader" % "3.16.0"
+libraryDependencies += "org.jline" % "jline-reader" % "3.20.0"
 libraryDependencies += "com.mitchtalmadge" % "ascii-data" % "1.4.0"
-
 
 scalacOptions ++= Seq("-language:implicitConversions", "-source:3.0")
 
-mainClass in assembly := Some("worksets.Main")
-test in assembly := {}
-assemblyOption in assembly := (assemblyOption in assembly).value.copy(prependShellScript = Some(defaultUniversalScript(shebang = false)))
-assemblyJarName in assembly := s"${name.value}-${version.value}"
-
+assembly / mainClass := Some("worksets.Main")
+assembly / test := {}
+assembly / assemblyOption := (assembly / assemblyOption).value.copy(prependShellScript = Some(defaultUniversalScript(shebang = false)))
+assembly / assemblyJarName := s"${name.value}-${version.value}"
