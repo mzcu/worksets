@@ -120,7 +120,7 @@ object Dsl:
 
     def worksetByE1RM(rpe: Rpe): RepsBuilder = (reps: Int) => {
       require(isOpen)
-      val e1rm = parent.workoutHistory.filter(_.sets.exists(_.exercise == exercise)).takeRight(10)
+      val e1rm = parent.workoutHistory.filter(_.sets.exists(_.exercise == exercise)).takeRight(2)
         .flatMap(WorkoutStats.e1rmPerExercise).filter(_._1 == exercise).minBy(-_._2.grams)._2
       val percent = RpeOps.toPct(reps, rpe)
       val weight = e1rm*percent

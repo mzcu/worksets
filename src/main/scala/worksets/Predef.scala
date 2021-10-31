@@ -19,6 +19,8 @@ object Predef:
   val FrontSquat: Exercise = Exercise("Front Squat")
   val StandingPress: Exercise = Exercise("Standing Press")
   val PullUps: Exercise = Exercise("Pull-ups")
+  val SnatchPull: Exercise = Exercise("Snatch Pull")
+  val Dips: Exercise = Exercise("Dips")
 
   // Exercises with mods
 
@@ -47,3 +49,11 @@ object Predef:
 
   // Pullups
   val BodyWeightPullups: ExerciseWithMods = ExerciseWithMods(PullUps, NoBar, NoMods)
+
+  // Pulls
+  val SnatchPullStandard: ExerciseWithMods = ExerciseWithMods(SnatchPull, Barbell, NoMods)
+
+  // Dips
+  val BodyWeightDips: ExerciseWithMods = ExerciseWithMods(Dips, NoBar, NoMods)
+
+
