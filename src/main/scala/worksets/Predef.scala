@@ -30,6 +30,7 @@ object Predef:
   val TouchAndGoBench: ExerciseWithMods = CompetitionBench.copy(mods = WithMods(tempo = Some(TouchAndGo)))
   val FeetUpBench: ExerciseWithMods = CompetitionBench.copy(mods = WithMods(stance = Some(FeetUp)))
   val WideGripBench: ExerciseWithMods = CompetitionBench.copy(mods = WithMods(grip = Some(WideGrip)))
+  val CloseGripBench: ExerciseWithMods = CompetitionBench.copy(mods = WithMods(grip = Some(CloseGrip)))
 
   // Squat
   val CompetitionSquat: ExerciseWithMods = ExerciseWithMods(Squat, Barbell, mods = WithMods(kit = Some(Belt)))
@@ -37,6 +38,7 @@ object Predef:
 
   // Deadlift
   val CompetitionDeadlift: ExerciseWithMods = ExerciseWithMods(Deadlift, Barbell, mods = WithMods(kit = Some(Belt)))
+  val DeficitDeadlift: ExerciseWithMods = ExerciseWithMods(Deadlift, Barbell, mods = WithMods(kit = Some(Belt), stance = Some(Deficit)))
 
   // Front squat
   val FrontSquatStandard: ExerciseWithMods = ExerciseWithMods(FrontSquat, Barbell, NoMods)

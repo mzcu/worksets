@@ -85,6 +85,7 @@ package object worksets:
   sealed trait StanceMod
 
   case object FeetUp extends StanceMod
+  case object Deficit extends StanceMod
 
   sealed trait GripMod
 

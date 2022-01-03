@@ -74,11 +74,17 @@ object CirceCodecs {
 
   given encodeStanceMod: Encoder[StanceMod] = Encoder.instance {
     case worksets.FeetUp => JsonObject("FeetUp" -> JsonObject.empty.asJson).asJson
+    case worksets.Deficit => JsonObject("Deficit" -> JsonObject.empty.asJson).asJson
   }
+
   given decodeStanceMod: Decoder[StanceMod] = (c: HCursor) => {
-    for
+    val case1 = for
       _ <- c.downField("FeetUp").as[Unit]
     yield FeetUp
+    val case2 = for
+      _ <- c.downField("Deficit").as[Unit]
+    yield Deficit
+    case1.orElse(case2)
   }
 
   given encodeGripMod: Encoder[GripMod] = Encoder.instance {
