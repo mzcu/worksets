@@ -18,7 +18,7 @@ object Strength4DayV3 extends WorkoutGenerator:
       workout
         exercise CompetitionSquat worksetByE1RM 8.rpe x 1 worksetByE1RM 8.rpe x 4 repeat 2
         exercise CompetitionBench worksetByE1RM 8.rpe x 1 worksetByE1RM 7.rpe x 4 repeat 2
-        exercise CloseGripBench workset 75.kg x 12 at 7.rpe repeat 2
+        exercise CloseGripBench workset 75.kg x 8 at 7.rpe repeat 2
         // exercise BodyWeightDips workset 85.kg x 12 at 7.rpe repeat 2
       )
 

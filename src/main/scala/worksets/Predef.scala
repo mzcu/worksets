@@ -38,7 +38,7 @@ object Predef:
 
   // Deadlift
   val CompetitionDeadlift: ExerciseWithMods = ExerciseWithMods(Deadlift, Barbell, mods = WithMods(kit = Some(Belt)))
-  val DeficitDeadlift: ExerciseWithMods = ExerciseWithMods(Deadlift, Barbell, mods = WithMods(kit = Some(Belt), stance = Some(Deficit)))
+  val DeficitDeadlift: ExerciseWithMods = ExerciseWithMods(Deadlift, Barbell, WithMods(stance = Some(Deficit)))
 
   // Front squat
   val FrontSquatStandard: ExerciseWithMods = ExerciseWithMods(FrontSquat, Barbell, NoMods)
