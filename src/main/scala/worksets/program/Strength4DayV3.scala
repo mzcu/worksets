@@ -17,9 +17,10 @@ object Strength4DayV3 extends WorkoutGenerator:
   private val squatDay: Workout = (
       workout
         exercise CompetitionSquat worksetByE1RM 8.rpe x 1 worksetByE1RM 8.rpe x 4 repeat 2
-        exercise CompetitionBench worksetByE1RM 8.rpe x 1 worksetByE1RM 7.rpe x 4 repeat 2
-        exercise CloseGripBench workset 75.kg x 8 at 7.rpe repeat 2
-        // exercise BodyWeightDips workset 85.kg x 12 at 7.rpe repeat 2
+        //exercise CompetitionBench worksetByE1RM 7.rpe x 1
+        exercise CompetitionBench workset 110.kg x 1 at 7.rpe
+        exercise TempoBench300 worksetByE1RM  8.rpe x 5 repeat 2
+        exercise CloseGripBench worksetByE1RM 7.rpe x 8 repeat 2
       )
 
   private val volumePull: Workout = (
@@ -30,9 +31,9 @@ object Strength4DayV3 extends WorkoutGenerator:
   
   private val powerPull: Workout = (
     workout
-      exercise DeficitDeadlift workset 100.kg x 5 at 7.rpe repeat 3
       exercise CompetitionDeadlift worksetByE1RM 8.rpe x 1
-      exercise PendlayRowStandard worksetByE1RM 7.rpe x 5 repeat 3
+      exercise PausedDeadlift worksetByE1RM 7.rpe x 5 repeat 3
+      exercise WeightedPullups worksetByE1RM  8.rpe x 5 repeat 3 // approx bw + added weight
     )
 
 

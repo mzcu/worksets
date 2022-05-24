@@ -42,11 +42,16 @@ object ProgramNextWeek extends Config:
     week.foreach { day =>
       textBuffer.appendColumn(
         s"""
-           |Date: \t${day.date.show}
-           |Volume: \t${day.volume.show}
-           |Avg RPE: \t${day.difficulty.formatted("%.1f")}
+           |Date:    ${day.date.show}
+           |Volume:  ${day.volume.show}
+           |Avg RPE: ${day.difficulty.formatted("%.1f")}
            |
            |${day.show}
+           |
+           |
+           |
+           |
+           |
            |
            |""".stripMargin)
     }

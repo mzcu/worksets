@@ -7,7 +7,7 @@ import worksets.UnitSpec
  */
 class TextBufferTest extends UnitSpec:
 
-  private val colSeparator = " "*10 + "\t"
+  private val colSeparator = " "*10
 
   it should "append columns" in {
     val tb = new TextBuffer

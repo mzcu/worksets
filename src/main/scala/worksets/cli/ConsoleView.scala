@@ -28,7 +28,7 @@ object ConsoleView {
       case _ => ""
     })
 
-  given workSetShow: Show[WorkSet] = (workset: WorkSet) => s"${workset.actual.show}"
+  given workSetShow: Show[WorkSet] = (workset: WorkSet) => s"${workset.actual.show}".padTo(30, ' ')
 
   given exerciseWithModsShow: Show[ExerciseWithMods] = { (it: ExerciseWithMods) =>
     @tailrec
@@ -47,9 +47,8 @@ object ConsoleView {
   }
 
   given barTypeShow: Show[BarType] =
-    case Barbell => ""
     case TrapBar => "Trap Bar"
-    case NoBar => "BodyWeight"
+    case _ => ""
 
   given exerciseShow: Show[Exercise] = (exercise: Exercise) => exercise.name
 
@@ -61,6 +60,6 @@ object ConsoleView {
 
   given workoutShow: Show[Workout] =
     case Workout(_, sets) => sets.groupBy(_.exercise).toList.sortBy(_._2.headOption.map(_.ord).orElse(Some(0)))
-      .map((t: (ExerciseWithMods, List[WorkSet])) => s"${t._1.show}\n\t" + t._2.map(_.show).mkString("\n\t")).mkString("\n")
+      .map((t: (ExerciseWithMods, List[WorkSet])) => s"${t._1.show}\n    " + t._2.map(_.show).mkString("\n    ")).mkString("\n")
 
 }

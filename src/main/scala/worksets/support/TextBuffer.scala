@@ -22,7 +22,7 @@ class TextBuffer:
       val currentLineLength = buf(blockIndex).size
       maxLen = if currentLineLength > maxLen then currentLineLength else maxLen
     }
-    buf.slice(blockStart, buf.size).mapInPlace(_.padToInPlace(maxLen + 10, ' ')).mapInPlace(_.append('\t'))
+    buf.slice(blockStart, buf.size).mapInPlace(_.padToInPlace(maxLen + 10, ' '))
 
   def appendRow(row: String): Unit =
     require(mode == Row, "Must enter row mode before using appendRow")
